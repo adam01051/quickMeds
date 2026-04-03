@@ -19,11 +19,6 @@ export class DatabaseModule {
         } else {
             console.error('MongoDB connection failed');
         }   
-        this.connection.on('connected', () => {
-            console.log(`MongoDB connected into ${process.env.NODE_ENV === 'production' ? 'production' : 'development'} db`);
-        });
-        this.connection.on('error', (err) => {
-            console.error('MongoDB connection error:', err);
-        });
+       
     }   
 }
