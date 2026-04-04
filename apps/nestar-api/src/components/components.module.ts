@@ -4,8 +4,20 @@ import { PropertyModule } from './property/property.module';
 import { AuthModule } from './auth/auth.module';
 import { FollowModule } from './follow/follow.module';
 import { BoardArticleModule } from './board-article/board-article.module';
+import { ViewModule } from './view/view.module';
+import { LikeModule } from './like/like.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
-	imports: [MemberModule, AuthModule, PropertyModule, FollowModule, BoardArticleModule],
+	imports: [
+		MemberModule,
+		AuthModule,
+		PropertyModule,
+		FollowModule,
+		BoardArticleModule,
+		CommentModule,
+		LikeModule,
+		ViewModule,
+	],
 })
 export class ComponentsModule {}

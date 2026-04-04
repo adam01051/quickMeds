@@ -7,9 +7,7 @@ import { ApolloDriver } from '@nestjs/apollo';
 import { AppResolver } from './app.resolver';
 import { ComponentsModule } from './components/components.module';
 import { DatabaseModule } from './database/database.module';
-import { CommentModule } from './components/comment/comment.module';
-import { LikeModule } from './components/like/like.module';
-import { ViewModule } from './components/view/view.module';
+
 @Module({
 	imports: [
 		ConfigModule.forRoot(),
@@ -21,9 +19,7 @@ import { ViewModule } from './components/view/view.module';
 		}),
 		ComponentsModule,
 		DatabaseModule,
-		CommentModule,
-		LikeModule,
-		ViewModule,
+		
 	],
 
 	controllers: [AppController],
