@@ -39,7 +39,7 @@ export class Member {
 	memberDesc?: string;
 
 	@Field(() => Int)
-	memberProperty: number;
+	memberProperties: number;
 
 	@Field(() => Int)
 	memberArticle: number;
@@ -74,8 +74,8 @@ export class Member {
 	deletedAt?: Date;
 
 	@Field(() => Date)
-    createdAt?: Date;
-    
+	createdAt?: Date;
+
 	@Field(() => Date)
 	updatedAt?: Date;
 }
