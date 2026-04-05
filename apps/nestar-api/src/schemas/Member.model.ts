@@ -53,7 +53,7 @@ const MemberSchema = new Schema(
 			default: 0,
 		},
 
-		memberArticle: {
+		memberArticles: {
 			type: Number,
 			default: 0,
 		},
