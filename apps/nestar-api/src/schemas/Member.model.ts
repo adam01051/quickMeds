@@ -57,7 +57,7 @@ const MemberSchema = new Schema(
 			type: Number,
 			default: 0,
 		},
-		memberFollower: {
+		memberFollowers: {
 			type: Number,
 			default: 0,
 		},
