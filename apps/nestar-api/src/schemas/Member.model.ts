@@ -95,7 +95,7 @@ const MemberSchema = new Schema(
 		},
 		deletedAt: {
 			type: Date,
-			default: null,
+			
 		},
 	},
 	{ timestamps: true, collection: 'members' },
