@@ -1,13 +1,11 @@
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { MemberModule } from './member.module';
+
 import { Model } from 'mongoose';
 import { Member } from '../../libs/dto/member/member';
 import { LoginInput, MemberInput } from '../../libs/dto/member/member.input';
 import { MemberStatus } from '../../libs/enums/member.enum';
 import { Message } from '../../libs/enums/common.enum';
-import { is } from '../../../../../node_modules/@types/whatwg-url/lib/URLSearchParams.d';
-
 @Injectable()
 export class MemberService {
 	constructor(@InjectModel('Member') private readonly memberModule: Model<Member>) {}
