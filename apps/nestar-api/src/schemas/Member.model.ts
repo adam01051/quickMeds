@@ -1,5 +1,5 @@
-import { Schema } from "mongoose";
-import { MemberAuthType, MemberStatus, MemberType } from "../libs/enums/member.enum";
+import { Schema } from 'mongoose';
+import { MemberAuthType, MemberStatus, MemberType } from '../libs/enums/member.enum';
 
 const MemberSchema = new Schema(
 	{
@@ -95,10 +95,9 @@ const MemberSchema = new Schema(
 		},
 		deletedAt: {
 			type: Date,
-			
 		},
 	},
 	{ timestamps: true, collection: 'members' },
 );
 
-export default MemberSchema;    
+export default MemberSchema;

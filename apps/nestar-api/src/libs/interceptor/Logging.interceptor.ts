@@ -1,13 +1,33 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-
+import { GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
-	intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-		console.log('Befkore');
+	private readonly logger: Logger = new Logger();
 
-		const now = Date.now();
-		return next.handle().pipe(tap(() => console.log(`After... ${Date.now() - now}ms`)));
+	public intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+		const recordTime = Date.now();
+		const requestType = context.getType<GqlContextType>();
+
+		if (requestType === 'http') {
+			//develop later
+		} else if (requestType === 'graphql') {
+			const gqlContext = GqlExecutionContext.create(context);
+
+			this.logger.log(`${this.stringify(gqlContext.getContext().req.body)}`, 'REQUEST');
+
+			return next.handle().pipe(
+				tap((context) => {
+					const responseTime = Date.now() - recordTime;
+
+					this.logger.log(`${this.stringify(context)} -  ${responseTime}ms \n\n`, ' Response');
+				}),
+			);
+		}
+	}
+
+	private stringify(context: ExecutionContext): string {
+		return JSON.stringify(context).slice(0, 75);
 	}
 }
