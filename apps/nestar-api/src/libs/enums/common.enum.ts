@@ -16,4 +16,6 @@ export enum Message {
 	NOT_ALLOWED_REQUEST = 'Not Allowed Request!',
 	PROVIDE_ALLOWED_FORMAT = 'Please provide jpg, jpeg or png images!',
 	SELF_SUBSCRIPTION_DENIED = 'Self subscription is denied!',
+	SIGNUP_FAILED = 'SIGNUP_FAILED',
+	USED_MEMBER_NICK_OR_PHONE = 'The member nick is already in use, please choose another one!',
 }

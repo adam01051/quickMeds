@@ -17,8 +17,8 @@ export class MemberService {
 			//todo Authentication via token
 			return result;
 		} catch (error) {
-			console.log('Error, service.model', error);
-			throw new BadRequestException();
+			console.log('Error, service.model', error.message);
+			throw new BadRequestException(Message.USED_MEMBER_NICK_OR_PHONE);
 		}
 	}
 	public async login(input: LoginInput): Promise<Member> {
