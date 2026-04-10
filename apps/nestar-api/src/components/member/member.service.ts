@@ -19,7 +19,9 @@ export class MemberService {
 
 		try {
 			const result = await this.memberModule.create(input);
-			//todo Authentication via token
+
+			await this.authService.createToken(result);
+
 			return result;
 		} catch (error) {
 			console.log('Error, service.model', error.message);
@@ -37,11 +39,12 @@ export class MemberService {
 		} else if (response.memberStatus === MemberStatus.BLOCK) {
 			throw new InternalServerErrorException(Message.BLOCKED_USER);
 		}
-		//TODO compare passwords
+
 		const isMatch = await this.authService.comparePasswords(memberPassword, response.memberPassword);
 
 		if (!isMatch) throw new InternalServerErrorException(Message.WRONG_PASSWORD);
 
+		response.accessToken = await this.authService.createToken(response);
 		return response;
 	}
 
@@ -50,5 +53,12 @@ export class MemberService {
 	}
 	public async getMember(): Promise<string> {
 		return 'getMember done';
+	}
+
+	public async getAllMembersByAdmin(): Promise<string> {
+		return 'getAllMembersByAdmin done';
+	}
+	public async updateMemberByAdmin(): Promise<string> {
+		return 'updateMemberByAdmin done';
 	}
 }
