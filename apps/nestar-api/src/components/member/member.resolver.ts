@@ -76,6 +76,6 @@ export class MemberResolver {
 	@Mutation(() => String)
 	public async updateMemberByAdmin(): Promise<string> {
 		console.log('mutation: updateMemberByAdmin');
-		return '';
+		return 'mutation: updateMemberByAdmin';
 	}
 }
