@@ -10,6 +10,7 @@ import { ObjectId } from 'mongodb';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
+import { MemberUpdate } from '../../libs/dto/member/member.update';
 
 @Resolver()
 export class MemberResolver {
@@ -28,12 +29,16 @@ export class MemberResolver {
 		return this.memberService.login(input);
 	}
 	@UseGuards(AuthGuard)
-	@Mutation(() => String)
-	public async updateMember(@AuthMember('_id') memberId: ObjectId): Promise<string> {
+	@Mutation(() => Member)
+	public async updateMember(
+		@Args('input') input: MemberUpdate,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Member> {
 		console.log('mutation updateMember');
+		delete input._id;
 		console.log(typeof memberId);
 
-		return this.memberService.updateMember();
+		return this.memberService.updateMember(memberId, input);
 	}
 
 	@UseGuards(AuthGuard)
@@ -67,9 +72,10 @@ export class MemberResolver {
 	public async checkAuthRoles(@AuthMember() authMember: Member): Promise<string> {
 		console.log('Query checkAuthRoles');
 		console.log(typeof authMember);
+		console.log(authMember._id);
 
 		console.log(authMember);
-		return `Authenticated as ${authMember.memberNick} as ${authMember.memberType}`;
+		return `Authenticated as ${authMember.memberNick} as ${authMember.memberType} ;${authMember._id} `;
 	}
 
 	//authorization by admin
