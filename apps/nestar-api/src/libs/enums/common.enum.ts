@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 export enum Message {
 	SOMETHING_WENT_WRONG = 'Something went wrong!',
 	NO_DATA_FOUND = 'No data found!',
@@ -19,3 +21,9 @@ export enum Message {
 	SIGNUP_FAILED = 'SIGNUP_FAILED',
 	USED_MEMBER_NICK_OR_PHONE = 'The member nick is already in use, please choose another one!',
 }
+
+export enum Direction {
+	ASC = 1,
+	DESC = -1,
+}
+registerEnumType(Direction, { name: 'Direction' });
