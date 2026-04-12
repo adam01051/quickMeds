@@ -9,11 +9,17 @@ import { Message } from '../../libs/enums/common.enum';
 import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { ObjectId } from 'mongodb';
+import { T } from '../../libs/types/commons';
+import { ViewService } from '../view/view.service';
+import { View } from '../../libs/dto/view/view';
+import { ViewInput } from '../../libs/dto/view/view.input';
+import { ViewGroup } from '../../libs/enums/view.enum';
 @Injectable()
 export class MemberService {
 	constructor(
 		@InjectModel('Member') private readonly memberModule: Model<Member>,
 		private authService: AuthService,
+		private viewService: ViewService,
 	) {}
 
 	public async signup(input: MemberInput): Promise<Member> {
@@ -61,8 +67,31 @@ export class MemberService {
 		result.accessToken = await this.authService.createToken(result);
 		return result;
 	}
-	public async getMember(): Promise<string> {
-		return 'getMember done';
+
+	public async getMember(memberId: ObjectId, targetId: ObjectId): Promise<Member> {
+		const search: T = {
+			_id: targetId,
+			memberStatus: {
+				$in: [MemberStatus.ACTIVE, MemberStatus.BLOCK],
+			},
+		};
+		const targetMember = await this.memberModule.findById(search).lean().exec();
+
+		if (!targetMember) {
+			throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		}
+
+		if (memberId) {
+			//record view
+			const viewInput = { memberId: memberId, viewRefId: targetId, viewGroup: ViewGroup.MEMBER };
+			const newView = await this.viewService.recordView(viewInput);
+			//increase memberView
+			if (newView) {
+				await this.memberModule.findByIdAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
+				targetMember.memberViews++;
+			}
+		}
+		return targetMember;
 	}
 
 	public async getAllMembersByAdmin(): Promise<string> {

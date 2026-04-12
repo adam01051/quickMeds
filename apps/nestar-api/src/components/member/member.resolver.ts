@@ -11,6 +11,8 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
+import { shapeIntoMoongoObjectId } from '../../libs/config';
+import { WithoutGuard } from '../auth/guards/without.guard';
 
 @Resolver()
 export class MemberResolver {
@@ -51,10 +53,14 @@ export class MemberResolver {
 		return `Authenticated as ${memberNick}`;
 	}
 
-	@Query(() => String)
-	public async getMember(): Promise<string> {
+	@UseGuards(WithoutGuard)
+	@Query(() => Member)
+	public async getMember(@Args('memberId') input: string, @AuthMember('_id') memberId: ObjectId): Promise<Member> {
 		console.log('Query getMember');
-		return this.memberService.getMember();
+
+		const targetId = shapeIntoMoongoObjectId(input);
+
+		return this.memberService.getMember(memberId, targetId);
 	}
 
 	//authorization by admin
