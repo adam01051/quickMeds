@@ -9,7 +9,7 @@ import { Direction, Message } from '../../libs/enums/common.enum';
 import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
 import { ObjectId } from 'mongodb';
-import { T } from '../../libs/types/commons';
+import { StatisticModifier, T } from '../../libs/types/commons';
 import { ViewService } from '../view/view.service';
 
 import { ViewGroup } from '../../libs/enums/view.enum';
@@ -157,5 +157,11 @@ export class MemberService {
 			throw new InternalServerErrorException(Message.UPDATE_FAILED);
 		}
 		return result;
+	}
+
+	public async memberStatsEditor(input: StatisticModifier): Promise<Member> {
+		console.log('executed: memberStatsEditor');
+		const { _id, targetKey, modifier } = input;
+		return await this.memberModule.findOneAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true });
 	}
 }
