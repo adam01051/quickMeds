@@ -116,7 +116,7 @@ export class MemberResolver {
 	public async imageUploader(
 		@Args({ name: 'file', type: () => GraphQLUpload })
 		{ createReadStream, filename, mimetype }: FileUpload,
-		@Args('target') target: String,
+		@Args('target') target: string,
 	): Promise<string> {
 		console.log('Mutation: imageUploader');
 
@@ -144,14 +144,14 @@ export class MemberResolver {
 	public async imagesUploader(
 		@Args('files', { type: () => [GraphQLUpload] })
 		files: Promise<FileUpload>[],
-		@Args('target') target: String,
+		@Args('target') target: string,
 	): Promise<string[]> {
 		console.log('Mutation: imagesUploader');
 
 		const uploadedImages = [];
-		const promisedList = files.map(async (img: Promise<FileUpload>, index: number): Promise<Promise<void>> => {
+		const promisedList = files.map(async (img: Promise<FileUpload>): Promise<Promise<void>> => {
 			try {
-				const { filename, mimetype, encoding, createReadStream } = await img;
+				const { filename, mimetype, createReadStream } = await img;
 
 				const validMime = validMimeTypes.includes(mimetype);
 				if (!validMime) throw new Error(Message.PROVIDE_ALLOWED_FORMAT);
@@ -168,7 +168,7 @@ export class MemberResolver {
 				});
 				if (!result) throw new Error(Message.UPLOAD_FAILED);
 
-				uploadedImages[index] = url;
+				uploadedImages.push(url);
 			} catch (err) {
 				console.log('Error, file missing!');
 			}
