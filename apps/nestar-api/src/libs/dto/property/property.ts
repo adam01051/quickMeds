@@ -11,7 +11,7 @@ export class Property {
 	@Field(() => PropertyType)
 	propertyType: PropertyType;
 
-	@Field(() => String)
+	@Field(() => PropertyStatus)
 	propertyStatus: PropertyStatus;
 
 	@Field(() => PropertyLocation)
@@ -25,6 +25,7 @@ export class Property {
 
 	@Field(() => Int)
 	propertyBeds: number;
+
 	@Field(() => Int)
 	propertyRooms: number;
 
