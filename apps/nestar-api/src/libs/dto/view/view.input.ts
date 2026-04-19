@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { ViewGroup } from '../../enums/view.enum';
 import { IsNotEmpty } from 'class-validator';
-import { ObjectId } from 'mongodb';
+import { ObjectId } from 'mongoose';
 
 @InputType()
 export class ViewInput {
@@ -11,10 +11,10 @@ export class ViewInput {
 	memberId: ObjectId;
 
 	@IsNotEmpty()
-	@Field(() => ViewGroup)
-	viewGroup: ViewGroup;
-
-	@IsNotEmpty()
 	@Field(() => String)
 	viewRefId: ObjectId;
+
+	@IsNotEmpty()
+	@Field(() => ViewGroup)
+	viewGroup: ViewGroup;
 }

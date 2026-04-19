@@ -8,7 +8,7 @@ import { MemberStatus, MemberType } from '../../libs/enums/member.enum';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { AuthService } from '../auth/auth.service';
 import { MemberUpdate } from '../../libs/dto/member/member.update';
-import { ObjectId } from 'mongodb';
+import { ObjectId } from 'mongoose';
 import { StatisticModifier, T } from '../../libs/types/commons';
 import { ViewService } from '../view/view.service';
 

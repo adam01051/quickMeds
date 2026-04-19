@@ -6,7 +6,7 @@ import { Member, Members } from '../../libs/dto/member/member';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
-import { ObjectId } from 'mongodb';
+import { ObjectId } from 'mongoose';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { MemberType } from '../../libs/enums/member.enum';
 import { RolesGuard } from '../auth/guards/roles.guard';
@@ -112,6 +112,7 @@ export class MemberResolver {
 	// IMAGE UPLOADER (member.resolver.ts)
 
 	@UseGuards(AuthGuard)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	@Mutation((returns) => String)
 	public async imageUploader(
 		@Args({ name: 'file', type: () => GraphQLUpload })
@@ -140,6 +141,7 @@ export class MemberResolver {
 	}
 
 	@UseGuards(AuthGuard)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	@Mutation((returns) => [String])
 	public async imagesUploader(
 		@Args('files', { type: () => [GraphQLUpload] })
