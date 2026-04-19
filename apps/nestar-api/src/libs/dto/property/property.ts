@@ -76,3 +76,17 @@ export class Property {
 	@Field(() => Date)
 	updatedAt: Date;
 }
+
+@ObjectType()
+export class MetaCounter {
+	@Field(() => Int)
+	total: number;
+}
+@ObjectType()
+export class Properties {
+	@Field(() => [Property])
+	list: Property[];
+
+	@Field(() => [MetaCounter])
+	metaCounter: MetaCounter[];
+}
