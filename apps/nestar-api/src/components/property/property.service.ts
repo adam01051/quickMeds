@@ -3,7 +3,7 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Properties, Property } from '../../libs/dto/property/property';
-import { PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
+import { AgentPropertiesInquiry, PropertiesInquiry, PropertyInput } from '../../libs/dto/property/property.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { MemberService } from '../member/member.service';
 import { PropertyStatus } from '../../libs/enums/property.enum';
@@ -11,7 +11,7 @@ import { ViewService } from '../view/view.service';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { StatisticModifier, T } from '../../libs/types/commons';
 import { PropertyUpdate } from '../../libs/dto/property/property.update';
-import moment from 'moment';
+import * as moment from 'moment';
 import { lookupMember, shapeIntoMoongoObjectId as shapeIntoMongoObjectId } from '../../libs/config';
 
 @Injectable()
@@ -163,5 +163,40 @@ export class PropertyService {
 				return { [ele]: true };
 			});
 		}
+	}
+
+	public async getAgentProperties(memberId: ObjectId, input: AgentPropertiesInquiry): Promise<Properties> {
+		const { propertyStatus } = input.search;
+
+		if (propertyStatus === PropertyStatus.DELETE) throw new BadRequestException(Message.NOT_ALLOWED_REQUEST);
+
+		const match: T = {
+			memberId: memberId,
+			propertyStatus: propertyStatus ?? { $ne: PropertyStatus.DELETE },
+		};
+
+		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
+
+		const result = await this.propertyModel
+			.aggregate([
+				{ $match: match },
+				{ $sort: sort },
+				{
+					$facet: {
+						list: [
+							{ $skip: (input.page - 1) * input.limit },
+							{ $limit: input.limit },
+							lookupMember,
+							{ $unwind: '$memberData' },
+						],
+						metaCounter: [{ $count: 'total' }],
+					},
+				},
+			])
+			.exec();
+
+		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+
+		return result[0];
 	}
 }
