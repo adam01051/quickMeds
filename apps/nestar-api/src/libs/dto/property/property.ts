@@ -23,6 +23,9 @@ export class Property {
 	@Field(() => Number)
 	propertySquare: number;
 
+	@Field(() => String)
+	propertyTitle: string;
+
 	@Field(() => Int)
 	propertyBeds: number;
 
