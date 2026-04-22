@@ -10,6 +10,9 @@ import { Comment, Comments } from '../../libs/dto/comment/comment';
 import { shapeIntoMoongoObjectId } from '../../libs/config';
 import { CommentUpdate } from '../../libs/dto/comment/comment.update';
 import { WithoutGuard } from '../auth/guards/without.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { MemberType } from '../../libs/enums/member.enum';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Resolver()
 export class CommentResolver {
@@ -46,5 +49,15 @@ export class CommentResolver {
 		input.search.commentRefId = shapeIntoMoongoObjectId(input.search.commentRefId);
 		const result = await this.commentService.getComments(memberId, input);
 		return result;
+	}
+
+	////adminnnnn apis
+	@Roles(MemberType.ADMIN)
+	@UseGuards(RolesGuard)
+	@Mutation(() => Comment)
+	public async removeCommentByAdmin(@Args('commentId') input: string): Promise<Comment> {
+		console.log('Mutation: removeCommentByAdmin');
+		const commentId = shapeIntoMoongoObjectId(input);
+		return await this.commentService.removeCommentByAdmin(commentId);
 	}
 }
