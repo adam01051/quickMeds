@@ -28,6 +28,7 @@ import { T } from './libs/types/commons';
 			},
 		}),
 		ComponentsModule,
+		
 		DatabaseModule,
 	],
 

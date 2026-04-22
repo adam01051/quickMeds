@@ -16,7 +16,7 @@ import { ViewGroup } from '../../libs/enums/view.enum';
 @Injectable()
 export class MemberService {
 	constructor(
-		@InjectModel('Member') private readonly memberModule: Model<Member>,
+		@InjectModel('Member') private readonly memberModel: Model<Member>,
 		private authService: AuthService,
 		private viewService: ViewService,
 	) {}
@@ -25,7 +25,7 @@ export class MemberService {
 		input.memberPassword = await this.authService.hashPassword(input.memberPassword);
 
 		try {
-			const result = await this.memberModule.create(input);
+			const result = await this.memberModel.create(input);
 
 			await this.authService.createToken(result);
 
@@ -37,7 +37,7 @@ export class MemberService {
 	}
 	public async login(input: LoginInput): Promise<Member> {
 		const { memberNick, memberPassword } = input;
-		const response: Member = await this.memberModule
+		const response: Member = await this.memberModel
 			.findOne({ memberNick: memberNick })
 			.select('+memberPassword')
 			.exec();
@@ -56,7 +56,7 @@ export class MemberService {
 	}
 
 	public async updateMember(memberId: ObjectId, input: MemberUpdate): Promise<Member> {
-		const result: Member = await this.memberModule
+		const result: Member = await this.memberModel
 			.findOneAndUpdate({ _id: memberId, memberStatus: MemberStatus.ACTIVE }, input, { new: true })
 			.exec();
 
@@ -74,7 +74,7 @@ export class MemberService {
 				$in: [MemberStatus.ACTIVE, MemberStatus.BLOCK],
 			},
 		};
-		const targetMember = await this.memberModule.findOne(search).lean().exec();
+		const targetMember = await this.memberModel.findOne(search).lean().exec();
 
 		if (!targetMember) {
 			throw new InternalServerErrorException(Message.NO_DATA_FOUND);
@@ -86,7 +86,7 @@ export class MemberService {
 			const newView = await this.viewService.recordView(viewInput);
 			//increase memberView
 			if (newView) {
-				await this.memberModule.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
+				await this.memberModel.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
 				targetMember.memberViews++;
 			}
 		}
@@ -104,7 +104,7 @@ export class MemberService {
 		{
 			console.log('match', match);
 		}
-		const result = await this.memberModule
+		const result = await this.memberModel
 			.aggregate([
 				{ $match: match },
 				{ $sort: sort },
@@ -133,7 +133,7 @@ export class MemberService {
 		{
 			console.log('match', match);
 		}
-		const result = await this.memberModule
+		const result = await this.memberModel
 			.aggregate([
 				{ $match: match },
 				{ $sort: sort },
@@ -151,7 +151,7 @@ export class MemberService {
 	}
 
 	public async updateMemberByAdmin(input: MemberUpdate): Promise<Member> {
-		const result: Member = await this.memberModule.findOneAndUpdate({ _id: input._id }, input, { new: true }).exec();
+		const result: Member = await this.memberModel.findOneAndUpdate({ _id: input._id }, input, { new: true }).exec();
 
 		if (!result) {
 			throw new InternalServerErrorException(Message.UPDATE_FAILED);
@@ -162,6 +162,6 @@ export class MemberService {
 	public async memberStatsEditor(input: StatisticModifier): Promise<Member> {
 		console.log('executed: memberStatsEditor');
 		const { _id, targetKey, modifier } = input;
-		return await this.memberModule.findOneAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true });
+		return await this.memberModel.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true });
 	}
 }
