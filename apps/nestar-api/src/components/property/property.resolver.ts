@@ -20,6 +20,7 @@ import { PropertyUpdate } from '../../libs/dto/property/property.update';
 @Resolver()
 export class PropertyResolver {
 	constructor(private readonly propertyService: PropertyService) {}
+
 	@Roles(MemberType.AGENT)
 	@UseGuards(RolesGuard)
 	@Mutation(() => Property)
