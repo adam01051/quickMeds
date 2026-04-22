@@ -2,12 +2,14 @@ import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { BoardArticleService } from './board-article.service';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/guards/auth.guard';
-import { BoardArticle } from '../../libs/dto/board-article/board-article';
-import { BoardArticleInput } from '../../libs/dto/board-article/board-article.input';
+import { BoardArticle, BoardArticles } from '../../libs/dto/board-article/board-article';
+import { BoardArticleInput, BoardArticlesInquiry } from '../../libs/dto/board-article/board-article.input';
 import { AuthMember } from '../auth/decorators/authMember.decorator';
 import { ObjectId } from 'mongoose';
 import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMoongoObjectId } from '../../libs/config';
+
+import { BoardArticleUpdate } from '../../libs/dto/board-article/board-article.update';
 
 @Resolver()
 export class BoardArticleResolver {
@@ -33,5 +35,28 @@ export class BoardArticleResolver {
 		console.log('Query: getBoardArticle');
 		const articleId = shapeIntoMoongoObjectId(input);
 		return await this.boardArticleService.getBoardArticle(memberId, articleId);
+	}
+
+	@UseGuards(AuthGuard)
+	@Mutation(() => BoardArticle)
+	public async updateBoardArticle(
+		@Args('input') input: BoardArticleUpdate,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<BoardArticle> {
+		console.log('mutation updateBoardArticle');
+		input._id = shapeIntoMoongoObjectId(input._id);
+
+		return await this.boardArticleService.updateBoardArticle(memberId, input);
+	}
+
+	@UseGuards(WithoutGuard)
+	@Query(() => BoardArticles)
+	public async getBoardArticles(
+		@Args('input') input: BoardArticlesInquiry,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<BoardArticles> {
+		console.log('mutation getBoardArticles');
+
+		return await this.boardArticleService.getBoardArticles(memberId, input);
 	}
 }

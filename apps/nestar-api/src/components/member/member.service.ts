@@ -74,7 +74,7 @@ export class MemberService {
 				$in: [MemberStatus.ACTIVE, MemberStatus.BLOCK],
 			},
 		};
-		const targetMember = await this.memberModule.findById(search).lean().exec();
+		const targetMember = await this.memberModule.findOne(search).lean().exec();
 
 		if (!targetMember) {
 			throw new InternalServerErrorException(Message.NO_DATA_FOUND);
@@ -86,7 +86,7 @@ export class MemberService {
 			const newView = await this.viewService.recordView(viewInput);
 			//increase memberView
 			if (newView) {
-				await this.memberModule.findByIdAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
+				await this.memberModule.findOneAndUpdate(search, { $inc: { memberViews: 1 } }, { new: true }).exec();
 				targetMember.memberViews++;
 			}
 		}
