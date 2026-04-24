@@ -1,4 +1,4 @@
-import { BadRequestException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Like, MeLiked } from '../../libs/dto/like/like';
@@ -9,15 +9,11 @@ import { Message } from '../../libs/enums/common.enum';
 // import { Properties } from '../../libs/dto/property/property';
 // import { LikeGroup } from '../../libs/enums/like.enum';
 
-import { MemberService } from '../member/member.service';
 import { T } from '../../libs/types/commons';
 
 @Injectable()
 export class LikeService {
-	constructor(
-		@InjectModel('Like') private readonly likeModel: Model<Like>,
-		@Inject(forwardRef(() => MemberService)) private readonly memberService: MemberService,
-	) {}
+	constructor(@InjectModel('Like') private readonly likeModel: Model<Like>) {}
 
 	public async toggleLike(input: LikeInput): Promise<number> {
 		// const { likeGroup, likeRefId, memberId } = input;
