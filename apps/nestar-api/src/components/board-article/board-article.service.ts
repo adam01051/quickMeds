@@ -61,7 +61,7 @@ export class BoardArticleService {
 			}
 		}
 		targetBoardArticle.memberData = await this.memberService.getMember(null, targetBoardArticle.memberId);
-		return targetBoardArticle;
+		return targetBoardArticle; //not to increase  members  view we use  put  null
 	}
 
 	public async updateBoardArticle(memberId: ObjectId, input: BoardArticleUpdate): Promise<BoardArticle> {
