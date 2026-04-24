@@ -179,4 +179,15 @@ export class MemberResolver {
 		await Promise.all(promisedList);
 		return uploadedImages;
 	}
+
+	@UseGuards(AuthGuard)
+	@Mutation(() => Member)
+	public async likeTargetMember(
+		@Args('memberId') input: string,
+		@AuthMember('_id') memberId: ObjectId,
+	): Promise<Member> {
+		console.log('Query likeTargetMember');
+		const likeRefId = shapeIntoMoongoObjectId(input);
+		return await this.memberService.likeTargetMember(memberId, likeRefId);
+	}
 }

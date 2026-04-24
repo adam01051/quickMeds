@@ -13,6 +13,7 @@ import { StatisticModifier, T } from '../../libs/types/commons';
 import { ViewService } from '../view/view.service';
 
 import { ViewGroup } from '../../libs/enums/view.enum';
+
 @Injectable()
 export class MemberService {
 	constructor(
@@ -163,5 +164,24 @@ export class MemberService {
 		console.log('executed: memberStatsEditor');
 		const { _id, targetKey, modifier } = input;
 		return await this.memberModel.findByIdAndUpdate(_id, { $inc: { [targetKey]: modifier } }, { new: true });
+	}
+
+	public async likeTargetMember(memberId: ObjectId, likeRefId: ObjectId): Promise<Member> {
+		const target: Member = await this.memberModel.findOne({ _id: likeRefId, memberStatus: MemberStatus.ACTIVE }).exec();
+
+		if (!target) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
+		//like toggle via like modules
+		// const input: LikeInput = {
+		// 	memberId: memberId,
+		// 	likeRefId: likeRefId,
+		// 	likeGroup: LikeGroup.MEMBER,
+		// };
+
+		const modifier: number = 1;
+		const result = await this.memberStatsEditor({ _id: likeRefId, targetKey: 'memberLikes', modifier: modifier });
+
+		if (!result) throw new InternalServerErrorException(Message.SOMETHING_WENT_WRONG);
+
+		return result;
 	}
 }
