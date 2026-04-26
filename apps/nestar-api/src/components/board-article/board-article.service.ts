@@ -10,7 +10,7 @@ import { StatisticModifier, T } from '../../libs/types/commons';
 import { BoardArticleStatus } from '../../libs/enums/board-article.enum';
 import { ViewGroup } from '../../libs/enums/view.enum';
 import { BoardArticleUpdate } from '../../libs/dto/board-article/board-article.update';
-import { lookupMember, shapeIntoMoongoObjectId } from '../../libs/config';
+import { lookUpAuthMemberLiked, lookupMember, shapeIntoMoongoObjectId } from '../../libs/config';
 import {
 	AllBoardArticlesInquiry,
 	BoardArticleInput,
@@ -122,6 +122,7 @@ export class BoardArticleService {
 						list: [
 							{ $skip: (input.page - 1) * input.limit },
 							{ $limit: input.limit },
+							lookUpAuthMemberLiked(memberId),
 							lookupMember,
 							{ $unwind: '$memberData' },
 						],
