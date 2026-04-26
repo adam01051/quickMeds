@@ -92,8 +92,6 @@ export class PropertyResolver {
 		return await this.propertyService.likeTargetProperty(memberId, likeRefId);
 	}
 
-	
-
 	///admin
 	@Roles(MemberType.ADMIN)
 	@UseGuards(RolesGuard)

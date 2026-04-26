@@ -17,10 +17,11 @@ import { ViewGroup } from '../../libs/enums/view.enum';
 import { StatisticModifier, T } from '../../libs/types/commons';
 import { PropertyUpdate } from '../../libs/dto/property/property.update';
 import * as moment from 'moment';
-import { lookupMember, shapeIntoMoongoObjectId as shapeIntoMongoObjectId } from '../../libs/config';
+
 import { LikeInput } from '../../libs/dto/like/like.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { LikeService } from '../like/like.service';
+import { lookUpAuthMemberLiked, lookupMember, shapeIntoMoongoObjectId } from '../../libs/config';
 
 @Injectable()
 export class PropertyService {
@@ -134,6 +135,7 @@ export class PropertyService {
 							{ $skip: (input.page - 1) * input.limit },
 							{ $limit: input.limit },
 							// meLiked
+							lookUpAuthMemberLiked(memberId),
 							lookupMember,
 							{ $unwind: '$memberData' },
 						],
@@ -162,7 +164,7 @@ export class PropertyService {
 			text,
 		} = input.search;
 
-		if (memberId) match.memberId = shapeIntoMongoObjectId(memberId);
+		if (memberId) match.memberId = shapeIntoMoongoObjectId(memberId);
 		if (locationList) match.propertyLocation = { $in: locationList };
 		if (roomsList) match.propertyRooms = { $in: roomsList };
 		if (bedsList) match.propertyBeds = { $in: bedsList };
