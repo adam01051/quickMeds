@@ -1,0 +1,23 @@
+import { Module } from '@nestjs/common';
+import { InjectConnection, MongooseModule } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+@Module({
+	imports: [
+		MongooseModule.forRootAsync({
+			useFactory: async () => ({
+				uri: process.env.NODE_ENV === 'production' ? process.env.MONGO_PROD : process.env.MONGO_DEV,
+			}),
+		}),
+	],
+
+	exports: [],
+})
+export class DatabaseModule {
+	constructor(@InjectConnection() private readonly connection: Connection) {
+		if (connection.readyState === 1) {
+			console.log(`MongoDB connected into ${process.env.NODE_ENV === 'production' ? 'production' : 'development'} db`);
+		} else {
+			console.error('MongoDB connection failed');
+		}
+	}
+}
