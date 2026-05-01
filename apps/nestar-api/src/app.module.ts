@@ -8,6 +8,7 @@ import { AppResolver } from './app.resolver';
 import { ComponentsModule } from './components/components.module';
 import { DatabaseModule } from './database/database.module';
 import { T } from './libs/types/commons';
+import { SocketModule } from './socket/socket.module';
 
 @Module({
 	imports: [
@@ -28,8 +29,10 @@ import { T } from './libs/types/commons';
 			},
 		}),
 		ComponentsModule,
-		
+
 		DatabaseModule,
+
+		SocketModule,
 	],
 
 	controllers: [AppController],
