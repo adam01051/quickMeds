@@ -44,7 +44,7 @@ export class BatchService {
 				propertyRank: 0,
 			})
 			.exec();
- 
+
 		const promisedList = properties.map(async (ele: Property) => {
 			const { _id, propertyLikes, propertyViews } = ele;
 			const rank = propertyLikes * 2 + propertyViews * 1;
