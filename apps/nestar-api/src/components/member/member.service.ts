@@ -38,7 +38,7 @@ export class MemberService {
 			await this.authService.createToken(result);
 
 			return result;
-		} catch (error) {
+		} catch (error:any) {
 			console.log('Error, service.model', error.message);
 			throw new BadRequestException(Message.USED_MEMBER_NICK_OR_PHONE);
 		}
@@ -119,7 +119,7 @@ export class MemberService {
 	}
 
 	public async getAgents(memberId: ObjectId, input: AgentsInquiry): Promise<Members> {
-		const { text } = input.search ?? {};
+		const { text } = input.search;
 		const match: T = { memberType: MemberType.AGENT, memberStatus: MemberStatus.ACTIVE };
 		const sort: T = { [input?.sort ?? 'createdAt']: input?.direction ?? Direction.DESC };
 
@@ -137,17 +137,20 @@ export class MemberService {
 							{ $skip: (input.page - 1) * input.limit }, //
 							{ $limit: input.limit }, //
 							lookUpAuthMemberLiked(memberId),
-							,
+							
 						],
 						metaCounter: [{ $count: 'total' }],
 					},
 				},
 			])
 			.exec();
+			console.log("service");;
 
 		if (!result.length) throw new InternalServerErrorException(Message.NO_DATA_FOUND);
 		return result[0];
 	}
+
+
 
 	public async getAllMembersByAdmin(input: MembersInquiry): Promise<Members> {
 		const { memberStatus, memberType, text } = input.search;

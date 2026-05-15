@@ -78,14 +78,10 @@ export class MemberResolver {
 	@UseGuards(RolesGuard)
 	@Query(() => String)
 	public async checkAuthRoles(@AuthMember() authMember: Member): Promise<string> {
-		console.log('Query checkAuthRoles');
-		console.log(typeof authMember);
-		console.log(authMember._id);
-		console.log('_==sasdasdasdasdasdasdasdasd');
-		console.log(authMember);
-		console.log('_==sasdasdasdasdasdasdasdasd');
+		 console.log('Query: checkAuthRoles');
 		return `Authenticated as ${authMember.memberNick} as ${authMember.memberType} ;${authMember._id} and ${authMember.memberFullName} `;
 	}
+
 
 	//authorization by admin
 
