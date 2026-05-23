@@ -39,7 +39,7 @@ export class FollowService {
 				followingId: followingId,
 				followerId: followerId,
 			});
-		} catch (err) {
+		} catch (err:any) {
 			console.log('Error, Service.model:', err.message);
 			throw new BadRequestException(Message.CREATE_FAILED);
 		}
