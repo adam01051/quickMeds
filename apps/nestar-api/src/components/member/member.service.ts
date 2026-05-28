@@ -29,20 +29,25 @@ export class MemberService {
 		private likeService: LikeService,
 	) {}
 
-	public async signup(input: MemberInput): Promise<Member> {
-		input.memberPassword = await this.authService.hashPassword(input.memberPassword);
+public async signup(input: MemberInput): Promise<Member> {
+	input.memberPassword = await this.authService.hashPassword(
+		input.memberPassword,
+	);
 
-		try {
-			const result = await this.memberModel.create(input);
+	try {
+		const result = await this.memberModel.create(input);
 
-			await this.authService.createToken(result);
+		result.accessToken = await this.authService.createToken(result);
 
-			return result;
-		} catch (error:any) {
-			console.log('Error, service.model', error.message);
-			throw new BadRequestException(Message.USED_MEMBER_NICK_OR_PHONE);
-		}
+		return result;
+	} catch (error: any) {
+		console.log('Error, service.model', error.message);
+
+		throw new BadRequestException(
+			Message.USED_MEMBER_NICK_OR_PHONE,
+		);
 	}
+}
 	public async login(input: LoginInput): Promise<Member> {
 		const { memberNick, memberPassword } = input;
 		const response: Member = await this.memberModel
