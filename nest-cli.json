@@ -1,31 +1,31 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/nestar-api/src",
+  "sourceRoot": "apps/quickmeds-api/src",
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/nestar-api/tsconfig.app.json"
+    "tsConfigPath": "apps/quickmeds-api/tsconfig.app.json"
   },
   "monorepo": true,
-  "root": "apps/nestar-api",
+  "root": "apps/quickmeds-api",
   "projects": {
-    "nestar-api": {
+    "quickmeds-api": {
       "type": "application",
-      "root": "apps/nestar-api",
+      "root": "apps/quickmeds-api",
       "entryFile": "main",
-      "sourceRoot": "apps/nestar-api/src",
+      "sourceRoot": "apps/quickmeds-api/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/nestar-api/tsconfig.app.json"
+        "tsConfigPath": "apps/quickmeds-api/tsconfig.app.json"
       }
     },
-    "nestar-batch": {
+    "quickmeds-batch": {
       "type": "application",
-      "root": "apps/nestar-batch",
+      "root": "apps/quickmeds-batch",
       "entryFile": "main",
-      "sourceRoot": "apps/nestar-batch/src",
+      "sourceRoot": "apps/quickmeds-batch/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/nestar-batch/tsconfig.app.json"
+        "tsConfigPath": "apps/quickmeds-batch/tsconfig.app.json"
       }
     }
   }
