@@ -66,6 +66,8 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 			memberData: authMember,
 			action: 'joined',
 		};
+		console.log("================================")
+		console.log(authMember);
 		this.emitMessage(infoMsg);
 		client.send(JSON.stringify({ event: 'getMessages', list: this.messageList }));
 	}
