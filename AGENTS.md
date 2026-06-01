@@ -12,10 +12,10 @@ QuickMeds is NestJS GraphQL monorepo migrated from real estate platform into a P
 Before changing code, read the current ai handoff docs
 
 
-- `docs/BACKEND_MIGRATION.md:`
-- `docs/DECISIONS.md`
-- `docs/COMPLETED_TASKS.md`
-- `docs/NEXT_STEPS.md`
+- `docs/ai/BACKEND_MIGRATION.md:`
+- `docs/ai/DECISIONS.md`
+- `docs/ai/COMPLETED_TASKS.md`
+- `docs/ai/NEXT_STEPS.md`
 
 ## Project Shape
 
