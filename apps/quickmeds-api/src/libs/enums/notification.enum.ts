@@ -19,7 +19,7 @@ registerEnumType(NotificationStatus, {
 export enum NotificationGroup {
 	MEMBER = 'MEMBER',
 	ARTICLE = 'ARTICLE',
-	PROPERTY = 'PROPERTY',
+	PHARMACY = 'PHARMACY',
 }
 registerEnumType(NotificationGroup, {
 	name: 'NotificationGroup',

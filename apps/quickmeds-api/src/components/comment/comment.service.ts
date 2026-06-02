@@ -7,7 +7,7 @@ import { BoardArticleService } from '../board-article/board-article.service';
 import { CommentInput, CommentsInquiry } from '../../libs/dto/comment/comment.input';
 import { Direction, Message } from '../../libs/enums/common.enum';
 import { CommentGroup, CommentStatus } from '../../libs/enums/comment.enum';
-import { PropertyService } from '../property/property.service';
+import { PharmacyService } from '../pharmacy/pharmacy.service';
 import { Comment, Comments } from '../../libs/dto/comment/comment';
 import { CommentUpdate } from '../../libs/dto/comment/comment.update';
 import { T } from '../../libs/types/commons';
@@ -19,7 +19,7 @@ export class CommentService {
 		private memberService: MemberService,
 
 		private boardArticleService: BoardArticleService,
-		private propertyService: PropertyService,
+		private pharmacyService: PharmacyService,
 	) {}
 
 	public async createComment(memberId: ObjectId, input: CommentInput): Promise<Comment> {
@@ -34,10 +34,10 @@ export class CommentService {
 		}
 
 		switch (input.commentGroup) {
-			case CommentGroup.PROPERTY:
-				await this.propertyService.propertyStatsEditor({
+			case CommentGroup.PHARMACY:
+				await this.pharmacyService.pharmacyStatsEditor({
 					_id: input.commentRefId,
-					targetKey: 'propertyComments',
+					targetKey: 'pharmacyComments',
 					modifier: 1,
 				});
 				break;

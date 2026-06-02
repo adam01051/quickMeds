@@ -5,7 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { MongooseModule } from '@nestjs/mongoose';
-import PropertySchema from 'apps/quickmeds-api/src/schemas/Property.model';
+import PharmacySchema from 'apps/quickmeds-api/src/schemas/Pharmacy.model';
 import MemberSchema from 'apps/quickmeds-api/src/schemas/Member.model';
 
 @Module({
@@ -13,7 +13,7 @@ import MemberSchema from 'apps/quickmeds-api/src/schemas/Member.model';
 		ConfigModule.forRoot(),
 		DatabaseModule,
 		ScheduleModule.forRoot(),
-		MongooseModule.forFeature([{ name: 'Property', schema: PropertySchema }]),
+		MongooseModule.forFeature([{ name: 'Pharmacy', schema: PharmacySchema }]),
 		MongooseModule.forFeature([{ name: 'Member', schema: MemberSchema }]),
 	],
 	controllers: [BatchController],

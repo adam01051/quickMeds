@@ -7,14 +7,14 @@ import { AuthModule } from '../auth/auth.module';
 import { MemberModule } from '../member/member.module';
 import CommentSchema from '../../schemas/Comment.model';
 import { BoardArticleModule } from '../board-article/board-article.module';
-import { PropertyModule } from '../property/property.module';
+import { PharmacyModule } from '../pharmacy/pharmacy.module';
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([{ name: 'Comment', schema: CommentSchema }]),
 		AuthModule,
 		MemberModule,
-		PropertyModule,
+		PharmacyModule,
 		BoardArticleModule,
 	],
 

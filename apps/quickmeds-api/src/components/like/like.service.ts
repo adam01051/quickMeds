@@ -3,16 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { Like, MeLiked } from '../../libs/dto/like/like';
 import { LikeInput } from '../../libs/dto/like/like.input';
-
 import { Message } from '../../libs/enums/common.enum';
-
-// import { Properties } from '../../libs/dto/property/property';
-// import { LikeGroup } from '../../libs/enums/like.enum';
-
 import { T } from '../../libs/types/commons';
-import { OrdinaryInquiry } from '../../libs/dto/property/property.input';
+import { OrdinaryInquiry } from '../../libs/dto/pharmacy/pharmacy.input';
 import { LikeGroup } from '../../libs/enums/like.enum';
-import { Properties } from '../../libs/dto/property/property';
+import { Pharmacies } from '../../libs/dto/pharmacy/pharmacy';
 import { lookupFavorite } from '../../libs/config';
 
 @Injectable()
@@ -20,7 +15,6 @@ export class LikeService {
 	constructor(@InjectModel('Like') private readonly likeModel: Model<Like>) {}
 
 	public async toggleLike(input: LikeInput): Promise<number> {
-		// const { likeGroup, likeRefId, memberId } = input;
 		const search: T = {
 				memberId: input.memberId,
 				likeRefId: input.likeRefId,
@@ -51,40 +45,38 @@ export class LikeService {
 		return result ? [{ memberId: memberId, likeRefId: likeRefId, myFavorite: true }] : [];
 	}
 
-	public async getFavoritProperties(memberId: ObjectId, input: OrdinaryInquiry): Promise<Properties> {
+	public async getFavoritePharmacies(memberId: ObjectId, input: OrdinaryInquiry): Promise<Pharmacies> {
 		const { page, limit } = input;
-		const match: T = { likeGroup: LikeGroup.PROPERTY, memberId: memberId };
+		const match: T = { likeGroup: LikeGroup.PHARMACY, memberId: memberId };
 		const data: T = await this.likeModel
 			.aggregate([
 				{ $match: match },
 				{ $sort: { updatedAt: -1 } },
 				{
 					$lookup: {
-						from: 'properties',
+						from: 'pharmacies',
 						localField: 'likeRefId',
 						foreignField: '_id',
-						as: 'favoriteProperty',
+						as: 'favoritePharmacy',
 					},
 				},
-				{ $unwind: '$favoriteProperty' },
+				{ $unwind: '$favoritePharmacy' },
 				{
 					$facet: {
 						list: [
 							{ $skip: (page - 1) * limit },
 							{ $limit: limit },
 							lookupFavorite,
-							{ $unwind: '$favoriteProperty.memberData' },
+							{ $unwind: '$favoritePharmacy.memberData' },
 						],
 						metaCounter: [{ $count: 'total' }],
 					},
 				},
 			])
 			.exec();
-		console.log(data[0].list[0]);
-		const result: Properties = { list: [], metaCounter: data[0].metaCounter };
-		result.list = data[0].list.map((ele) => ele.favoriteProperty);
-		return result;
 
-		return null;
+		const result: Pharmacies = { list: [], metaCounter: data[0].metaCounter };
+		result.list = data[0].list.map((ele) => ele.favoritePharmacy);
+		return result;
 	}
 }

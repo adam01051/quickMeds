@@ -1,69 +1,70 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { ObjectId } from 'mongoose';
-import { PropertyLocation, PropertyStatus, PropertyType } from '../../enums/property.enum';
+import { PharmacyLocation, PharmacyStatus, PharmacyType } from '../../enums/pharmacy.enum';
 import { Member, TotalCounter } from '../member/member';
 import { MeLiked } from '../like/like';
 
 @ObjectType()
-export class Property {
+export class Pharmacy {
 	@Field(() => String)
 	_id: ObjectId;
 
-	@Field(() => PropertyType)
-	propertyType: PropertyType;
+	@Field(() => PharmacyType)
+	pharmacyType: PharmacyType;
 
-	@Field(() => PropertyStatus)
-	propertyStatus: PropertyStatus;
+	@Field(() => PharmacyStatus)
+	pharmacyStatus: PharmacyStatus;
 
-	@Field(() => PropertyLocation)
-	propertyLocation: PropertyLocation;
+	@Field(() => PharmacyLocation)
+	pharmacyLocation: PharmacyLocation;
 
 	@Field(() => String)
-	propertyAddress: string;
+	pharmacyAddress: string;
 
 	@Field(() => Number)
-	propertySquare: number;
+	pharmacyDeliveryFee: number;
 
 	@Field(() => String)
-	propertyTitle: string;
+	pharmacyName: string;
+
+	@Field(() => Number)
+	pharmacyLatitude: number;
+
+	@Field(() => Number)
+	pharmacyLongitude: number;
 
 	@Field(() => Int)
-	propertyBeds: number;
+	pharmacyMedicationCount: number;
 
 	@Field(() => Int)
-	propertyRooms: number;
+	pharmacyViews: number;
 
 	@Field(() => Int)
-	propertyPrice: number;
+	pharmacyLikes: number;
 
 	@Field(() => Int)
-	propertyViews: number;
+	pharmacyComments: number;
 
 	@Field(() => Int)
-	propertyLikes: number;
-	@Field(() => Int)
-	propertyComments: number;
-
-	@Field(() => Int)
-	propertyRank: number;
+	pharmacyRank: number;
 
 	@Field(() => [String])
-	propertyImages: string[];
+	pharmacyImages: string[];
 
 	@Field(() => String, { nullable: true })
-	propertyDesc?: string;
+	pharmacyDesc?: string;
 
 	@Field(() => Boolean)
-	propertyBarter: boolean;
+	acceptsInsurance: boolean;
 
 	@Field(() => Boolean)
-	propertyRent: boolean;
+	hasDelivery: boolean;
 
 	@Field(() => String)
 	memberId: ObjectId;
 
 	@Field(() => Date, { nullable: true })
-	soldAt: Date;
+	verifiedAt?: Date;
 
 	@Field(() => Member, { nullable: true })
 	memberData: Member;
@@ -72,7 +73,7 @@ export class Property {
 	deletedAt?: Date;
 
 	@Field(() => Date, { nullable: true })
-	constructedAt?: Date;
+	openedAt?: Date;
 
 	@Field(() => Date)
 	createdAt: Date;
@@ -85,9 +86,9 @@ export class Property {
 }
 
 @ObjectType()
-export class Properties {
-	@Field(() => [Property])
-	list: Property[];
+export class Pharmacies {
+	@Field(() => [Pharmacy])
+	list: Pharmacy[];
 
 	@Field(() => [TotalCounter], { nullable: true })
 	metaCounter: TotalCounter[];

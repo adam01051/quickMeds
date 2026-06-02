@@ -4,9 +4,9 @@ import { Model, ObjectId } from 'mongoose';
 import { View } from '../../libs/dto/view/view';
 import { ViewInput } from '../../libs/dto/view/view.input';
 import { T } from '../../libs/types/commons';
-import { OrdinaryInquiry } from '../../libs/dto/property/property.input';
+import { OrdinaryInquiry } from '../../libs/dto/pharmacy/pharmacy.input';
 import { ViewGroup } from '../../libs/enums/view.enum';
-import { Properties } from '../../libs/dto/property/property';
+import { Pharmacies } from '../../libs/dto/pharmacy/pharmacy';
 import { lookupVisit } from '../../libs/config';
 
 @Injectable()
@@ -20,6 +20,7 @@ export class ViewService {
 			return await this.viewModel.create(input);
 		} else return null;
 	}
+
 	private async checkViewExists(input: ViewInput): Promise<View> {
 		const { memberId, viewRefId } = input;
 
@@ -27,10 +28,10 @@ export class ViewService {
 		return await this.viewModel.findOne(search).exec();
 	}
 
-	public async getVisitedProperties(memberId: ObjectId, input: OrdinaryInquiry): Promise<Properties> {
+	public async getVisitedPharmacies(memberId: ObjectId, input: OrdinaryInquiry): Promise<Pharmacies> {
 		const { page, limit } = input;
 		const match: T = {
-			viewGroup: ViewGroup.PROPERTY,
+			viewGroup: ViewGroup.PHARMACY,
 			memberId: memberId,
 		};
 		const data: T = await this.viewModel
@@ -39,20 +40,20 @@ export class ViewService {
 				{ $sort: { updatedAt: -1 } },
 				{
 					$lookup: {
-						from: 'properties',
+						from: 'pharmacies',
 						localField: 'viewRefId',
 						foreignField: '_id',
-						as: 'visitedProperty',
+						as: 'visitedPharmacy',
 					},
 				},
-				{ $unwind: '$visitedProperty' },
+				{ $unwind: '$visitedPharmacy' },
 				{
 					$facet: {
 						list: [
-							{ $skip: (page - 1) * limit }, //
-							{ $limit: limit }, //
+							{ $skip: (page - 1) * limit },
+							{ $limit: limit },
 							lookupVisit,
-							{ $unwind: '$visitedProperty.memberData' },
+							{ $unwind: '$visitedPharmacy.memberData' },
 						],
 						metaCounter: [{ $count: 'total' }],
 					},
@@ -60,8 +61,8 @@ export class ViewService {
 			])
 			.exec();
 
-		const result: Properties = { list: [], metaCounter: data[0].metaCounter };
-		result.list = data[0].list.map((ele) => ele.visitedProperty);
+		const result: Pharmacies = { list: [], metaCounter: data[0].metaCounter };
+		result.list = data[0].list.map((ele) => ele.visitedPharmacy);
 		return result;
 	}
 }

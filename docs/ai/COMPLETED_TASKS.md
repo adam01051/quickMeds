@@ -19,6 +19,7 @@ This session completed the repository audit and safe rename layer for the Nestar
 | Runtime label update | Completed | API and batch welcome strings now say quickMeds. |
 | Environment app label update | Completed | `.env` Mongo URI `appName` label changed to `quickMeds`; host/path unchanged. |
 | Lint-only cleanup | Completed | Removed one unused import and one unused method parameter surfaced by lint. |
+| Full property-to-pharmacy backend migration | Completed | Replaced Property APIs, DTOs, schema, model, collection, shared social groups, member counter, and batch ranking with Pharmacy terminology. |
 
 ## Changed Areas
 
@@ -32,6 +33,7 @@ This session completed the repository audit and safe rename layer for the Nestar
 | Cross-app imports | Batch module/service imports and auth guard absolute imports |
 | Environment label | `.env` |
 | Lint cleanup | `Notice.model.ts`, `socket.gateway.ts` |
+| Pharmacy domain migration | `PharmacyModule`, `PharmacyService`, `PharmacyResolver`, pharmacy DTOs/enums/schema, social modules, member counter, batch app |
 
 ## Validation Status
 
@@ -42,13 +44,15 @@ This session completed the repository audit and safe rename layer for the Nestar
 | Main build/typecheck | `npm run build` | Passed. |
 | API project build | `npx nest build quickmeds-api` | Passed. |
 | Batch project build | `npx nest build quickmeds-batch` | Passed. |
+| Pharmacy API typecheck | `npx tsc -p apps/quickmeds-api/tsconfig.app.json --noEmit` | Passed. |
+| Pharmacy batch typecheck | `npx tsc -p apps/quickmeds-batch/tsconfig.app.json --noEmit` | Passed. |
+| Pharmacy service focused spec | `npx jest apps/quickmeds-api/src/components/pharmacy/pharmacy.service.spec.ts --runInBand` | Passed. |
+| Full build after pharmacy migration | `npm run build` | Passed. |
 
 ## Explicitly Not Changed
 
 | Not changed | Reason |
 | --- | --- |
-| GraphQL operations and types | Preserved client compatibility. |
-| MongoDB collections and schema fields | Avoided data migration during safe rename. |
-| `Property` module/domain | Business-domain migration is a later phase. |
-| `Agent` role and member counters | Role model redesign is pending. |
-| Batch ranking formulas | Domain behavior was intentionally preserved. |
+| `MemberType.USER`, `MemberType.AGENT`, `MemberType.ADMIN` | User requested member types remain unchanged. |
+| Existing MongoDB data backfill | Requires a separate production migration plan. |
+| Board article to health article rename | Outside this property-to-pharmacy phase. |
