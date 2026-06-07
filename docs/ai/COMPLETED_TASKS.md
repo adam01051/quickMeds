@@ -56,3 +56,31 @@ This session completed the repository audit and safe rename layer for the Nestar
 | `MemberType.USER`, `MemberType.AGENT`, `MemberType.ADMIN` | User requested member types remain unchanged. |
 | Existing MongoDB data backfill | Requires a separate production migration plan. |
 | Board article to health article rename | Outside this property-to-pharmacy phase. |
+
+## Frontend Pharmacy Migration
+
+The `quickMeds-next` frontend was migrated from the removed property GraphQL contract to the current pharmacy backend contract while preserving the existing Pages Router, Apollo integration, routes, and SCSS architecture.
+
+| Task | Status | Notes |
+| --- | --- | --- |
+| Frontend pharmacy GraphQL migration | Completed | Replaced property operations and member property counters with pharmacy operations and `memberPharmacies`. |
+| Pharmacy frontend types and enums | Completed | Added backend-aligned pharmacy types, statuses, locations, filters, inputs, and updates. |
+| Public pharmacy catalog | Completed | Migrated catalog, detail, favorites, visited, homepage cards, likes, comments, and filters to pharmacy fields. |
+| Pharmacy owner workflows | Completed | Kept `MemberType.AGENT` internally and changed visible terminology to Pharmacy Owner. |
+| Owner pharmacy management | Completed | Migrated create, edit, status, image upload, and owner pharmacy list workflows. |
+| Admin pharmacy management | Completed | Migrated admin queries, mutations, filters, statuses, and table content. |
+| Branding and UI terminology | Completed | Updated visible Nestar and real-estate copy to quickMeds/pharmacy terminology while preserving route and SCSS compatibility. |
+| Assets and layout cleanup | Completed | Removed the floor-plan UI and replaced obvious property fact icons with neutral catalog/service icons. |
+
+## Frontend Validation
+
+| Validation | Command | Result |
+| --- | --- | --- |
+| Frontend typecheck | `yarn typecheck --pretty false` | Passed. |
+| Frontend production build | `yarn build` | Passed; all 73 static pages generated. |
+| Live backend schema check | GraphQL introspection at `http://localhost:3007/graphql` | Passed; pharmacy query and mutation operations confirmed. |
+| Live pharmacy catalog smoke query | `getPharmacies` with current pharmacy/member fields | Passed; returned an active pharmacy. |
+| Served frontend smoke check | `http://localhost:3000/property` | Passed; returned quickMeds Pharmacy Search and pharmacy catalog content. |
+| Stale GraphQL contract scan | Search for removed property operations, fields, and `PROPERTY` social groups | Passed. |
+| Frontend lint | `yarn lint` | Blocked because the repository has no ESLint configuration and Next.js opens an interactive setup prompt. |
+| In-app browser smoke test | In-app Browser connection | Blocked because no in-app browser session was available; HTTP smoke checks passed instead. |
