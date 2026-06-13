@@ -6,7 +6,7 @@ jest.mock('../../libs/config', () => ({
 
 import { PharmacyService } from './pharmacy.service';
 import { LikeGroup } from '../../libs/enums/like.enum';
-import { PharmacyStatus } from '../../libs/enums/pharmacy.enum';
+import { PharmacyLocation, PharmacyStatus } from '../../libs/enums/pharmacy.enum';
 
 describe('PharmacyService', () => {
 	const memberService = {
@@ -24,6 +24,7 @@ describe('PharmacyService', () => {
 		create: jest.fn(),
 		findOne: jest.fn(),
 		findByIdAndUpdate: jest.fn(),
+		aggregate: jest.fn(),
 	};
 
 	let service: PharmacyService;
@@ -63,6 +64,22 @@ describe('PharmacyService', () => {
 			'pharmacy-id',
 			{ $inc: { pharmacyLikes: 1 } },
 			{ new: true },
+		);
+	});
+
+	it('filters pharmacies by Uzbekistan region without changing the inquiry shape', async () => {
+		pharmacyModel.aggregate.mockReturnValue({ exec: jest.fn().mockResolvedValue([{ list: [], metaCounter: [] }]) });
+
+		await service.getPharmacies(null, {
+			page: 1,
+			limit: 9,
+			search: { locationList: [PharmacyLocation.SAMARKAND] },
+		} as any);
+
+		expect(pharmacyModel.aggregate).toHaveBeenCalledWith(
+			expect.arrayContaining([
+				{ $match: { pharmacyStatus: PharmacyStatus.ACTIVE, pharmacyLocation: { $in: [PharmacyLocation.SAMARKAND] } } },
+			]),
 		);
 	});
 });
