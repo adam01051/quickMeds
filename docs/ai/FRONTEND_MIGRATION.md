@@ -1,5 +1,11 @@
 # Frontend Migration Plan
 
+## Current Authority
+
+QuickMeds is a pharmacy-discovery platform. The public catalog entity is a Pharmacy, not a medicine or generic Product. Medicine catalog, inventory, prescription, and price-comparison workflows are out of scope.
+
+The historical compatibility plan below is retained only as migration context. Its proposed Product/medicine terminology and stale Property GraphQL operations are superseded by the implemented Pharmacy contract and canonical frontend `/pharmacies` routes.
+
 ## Context
 
 No Next.js frontend source was inspected in this backend repo. This plan maps the known Nestar backend concepts and likely frontend surfaces to quickMeds pharmacy marketplace concepts. Treat it as the starting checklist for the actual frontend repository audit.
@@ -71,3 +77,21 @@ During the compatibility phase, keep backend GraphQL operations unchanged and re
 - Do not change backend operation names from the frontend repo without a backend compatibility phase.
 - Avoid exposing real-estate field labels to users once quickMeds branding is visible.
 - Keep a temporary compatibility layer small and easy to delete after backend GraphQL migration.
+
+## June 14, 2026 Frontend Integration Status
+
+The active frontend now consumes the Pharmacy GraphQL contract and canonical `/pharmacies` routes. It supports persisted UZS delivery fees, owner schedules, explicit 24/7 status, Open-now filters, verified-status display, favorites, comments, and pharmacy detail information.
+
+Completed visual migrations that required no backend changes:
+
+- shared public desktop Warm Civic Pharmacy navbar;
+- responsive pharmacy detail page;
+- catalog-specific pharmacy-service card;
+- catalog loading, error, empty, image-fallback, favorite, and detail states.
+
+Deferred frontend/backend integration:
+
+- verified-only public filtering;
+- current-location radius/distance search;
+- structured city/district search;
+- remaining Nestar catalog shell, Favorites/Recently Visited cards, owner/admin presentation, mobile navigation/catalog, and footer content.

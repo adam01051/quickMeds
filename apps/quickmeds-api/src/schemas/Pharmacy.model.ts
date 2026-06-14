@@ -90,6 +90,29 @@ const PharmacySchema = new Schema(
 			default: false,
 		},
 
+		open24Hours: {
+			type: Boolean,
+			default: false,
+		},
+
+		pharmacyTimezone: {
+			type: String,
+			default: 'Asia/Tashkent',
+		},
+
+		operatingHours: {
+			type: [
+				{
+					_id: false,
+					dayOfWeek: { type: Number, min: 1, max: 7, required: true },
+					isClosed: { type: Boolean, required: true },
+					opensAt: String,
+					closesAt: String,
+				},
+			],
+			default: [],
+		},
+
 		memberId: {
 			type: Schema.Types.ObjectId,
 			required: true,

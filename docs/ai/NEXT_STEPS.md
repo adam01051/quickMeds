@@ -1,5 +1,14 @@
 # Next Steps
 
+## Current Priority
+
+1. Replace or remove demo pharmacy records before production and verify real-world branch details with operators.
+2. Add authenticated GraphQL smoke coverage for owner create/edit, favorites, and recently visited.
+3. Add an approved verified-only public filter.
+4. Keep current-location distance search deferred.
+
+Pharmacy discovery is authoritative. Do not introduce medicine catalog, inventory, prescription, or price-comparison features.
+
 ## Priority Order
 
 1. Plan MongoDB data migration from old property-era documents to pharmacy-era documents if existing data must be preserved.
@@ -33,3 +42,17 @@
 | P0 | Keep TypeScript checks in migration checklist | `npx tsc -p apps/quickmeds-api/tsconfig.app.json --noEmit` and batch equivalent. |
 | P0 | Keep build check | Run `npm run build` after implementation work. |
 | P1 | Add e2e smoke tests | Cover pharmacy catalog, pharmacy detail, saved pharmacies, and owner pharmacy pages. |
+# Delivery And Hours Follow-up
+
+- Run the pharmacy-hours migration in each deployment environment.
+- Monitor owner completion of missing working hours.
+- Current-location distance search remains deferred.
+
+## Next Backend Work After June 14 Checkpoint
+
+1. Add the approved verified-only public inquiry filter while preserving admin-only verification control.
+2. Design coordinate-radius/current-location search, distance output, indexes, limits, and invalid-coordinate behavior before enabling frontend controls.
+3. Improve structured Uzbekistan city/district/address data and search beyond the current region enum plus text field.
+4. Add authenticated integration smoke coverage for owner create/edit, favorites, and recently visited.
+5. Confirm, replace, or remove all demo owners/pharmacies before production.
+6. Keep medicine catalog, inventory, prescription, and price-comparison workflows outside the pharmacy-discovery scope.

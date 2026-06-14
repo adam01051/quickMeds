@@ -23,7 +23,7 @@ The current `getPharmacies(input: PharmaciesInquiry)` contract already supports 
 
 `All regions` must continue to omit `locationList`. No new backend value is required for it.
 
-## Required Backend Additions
+## Capability Status And Remaining Backend Additions
 
 ### P0: Uzbekistan Region Data Quality
 
@@ -69,7 +69,7 @@ Behavior:
 - Only admins may set or clear `verifiedAt`.
 - Pharmacy Owners must not be able to self-verify.
 
-### P1: Operating Hours, Open Now, And 24/7
+### Implemented: Operating Hours, Open Now, And 24/7
 
 `openedAt` is the pharmacy establishment/opening date. It must not be used to calculate whether a pharmacy is currently open.
 
@@ -264,6 +264,64 @@ Required validation commands:
 
 ## Deferred Backend Work
 
+## Implemented Delivery Fee And Operating Hours Contract
+
+Implemented in June 2026:
+
+- `pharmacyDeliveryFee` is an integer UZS amount persisted by the backend.
+- New delivery-enabled pharmacies default to `3000` when the owner omits the fee.
+- Owners may set `0` for free delivery. Disabling delivery always normalizes the fee to `0`.
+- Negative and non-integer delivery fees are rejected.
+- Delivery-fee ranges only match delivery-enabled pharmacies.
+- Existing delivery-enabled fee `0` values remain free delivery.
+
+The additive pharmacy contract now includes:
+
+```graphql
+open24Hours: Boolean!
+pharmacyTimezone: String!
+operatingHours: [PharmacyOperatingDay!]!
+hoursConfigured: Boolean!
+isOpenNow: Boolean!
+nextOpeningAt: DateTime
+nextClosingAt: DateTime
+```
+
+`PharmacyInquirySearch` now accepts `openNow` and `open24Hours`. Owners may select explicit 24/7 operation or provide one interval per weekday. Weekdays use Monday `1` through Sunday `7`; overnight intervals are supported. Missing hours are valid and never imply that a pharmacy is open. `openedAt` remains the establishment date.
+
+Migration:
+
+```bash
+npm run migrate:pharmacy-hours -- --dry-run
+npm run migrate:pharmacy-hours
+```
+
+The idempotent migration adds `Asia/Tashkent`, `open24Hours: false`, and empty schedules where missing; defaults missing delivery-enabled fees to `3000`; preserves existing free delivery; and normalizes non-delivery fees to `0`. Rollback requires restoring the database backup taken before execution; the additive fields may otherwise remain safely unused.
+
+Frontend integration now enables Open now and 24/7 homepage/catalog filters, owner schedule editing, UZS fee formatting, public operating-status badges, pharmacy-detail weekly hours, and admin missing-hours visibility. Current-location distance search remains deferred.
+
+Validation completed:
+
+- Migration dry-run before execution: one pharmacy required timezone, 24/7, and schedule defaults.
+- Migration execution completed; verification dry-run reports zero missing or invalid records.
+- Focused pharmacy service tests, API and batch TypeScript checks, backend build, and diff checks passed.
+
+Restart checkpoint note: the live catalog currently contains one legacy pharmacy with `pharmacyDeliveryFee: 3.5`. This violates the integer-UZS contract. Extend migration reporting to detect fractional values, then normalize that record before adding seed pharmacies.
+
+## Demo Data Coverage
+
+The development database now contains five Tashkent demo pharmacies created through the production GraphQL creation path. Together they cover:
+
+- explicit 24/7 operation;
+- missing hours;
+- standard weekly hours;
+- a closed weekday;
+- overnight hours;
+- free, paid, and unavailable delivery;
+- varied insurance support.
+
+The previous fractional fee was normalized to `3000 UZS`, and migration verification reports zero fractional fees. OpenStreetMap source nodes: [539711320](https://www.openstreetmap.org/node/539711320), [1352430514](https://www.openstreetmap.org/node/1352430514), [1765156217](https://www.openstreetmap.org/node/1765156217), [1770666675](https://www.openstreetmap.org/node/1770666675), and [2459402396](https://www.openstreetmap.org/node/2459402396).
+
 The following remain outside this pharmacy-discovery backend phase:
 
 - Medicine catalog and medicine search.
@@ -272,3 +330,23 @@ The following remain outside this pharmacy-discovery backend phase:
 - Chat redesign.
 - Notification behavior.
 - Localization of stored pharmacy content.
+
+## June 14, 2026 Integration Checkpoint
+
+The live backend currently satisfies the redesigned homepage, catalog card, and pharmacy-detail requirements for:
+
+- pharmacy name, type, address, region, images, and owner data;
+- persisted integer UZS delivery fee plus delivery availability;
+- insurance availability;
+- explicit 24/7, configured/missing hours, computed Open now, and next opening/closing;
+- verified-status display from `verifiedAt`;
+- favorites, comments, nearby pharmacies, sorting, filtering, and pagination.
+
+The frontend deliberately stopped displaying public medication count, rank, views, and likes on the redesigned catalog card. These fields remain in the backend for compatibility and are not removal targets in this visual phase.
+
+Remaining backend capabilities requested by future frontend phases:
+
+- verified-only filtering in `PharmacyInquirySearch`;
+- GeoJSON/radius/current-location search with returned distance;
+- structured Uzbekistan city/district/address fields and filtering;
+- production-grade verification and cleanup of development demo records.

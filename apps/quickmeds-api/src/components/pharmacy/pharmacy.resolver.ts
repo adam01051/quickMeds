@@ -1,6 +1,6 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { PharmacyService } from './pharmacy.service';
-import { Pharmacies, Pharmacy } from '../../libs/dto/pharmacy/pharmacy';
+import { Pharmacies, Pharmacy, PharmacyOperatingDay } from '../../libs/dto/pharmacy/pharmacy';
 import {
 	AgentPharmaciesInquiry,
 	AllPharmaciesInquiry,
@@ -18,10 +18,46 @@ import { WithoutGuard } from '../auth/guards/without.guard';
 import { shapeIntoMoongoObjectId } from '../../libs/config';
 import { PharmacyUpdate } from '../../libs/dto/pharmacy/pharmacy.update';
 import { AuthGuard } from '../auth/guards/auth.guard';
+import { calculateOperatingStatus } from './pharmacy.service';
 
-@Resolver()
+@Resolver(() => Pharmacy)
 export class PharmacyResolver {
 	constructor(private readonly pharmacyService: PharmacyService) {}
+
+	@ResolveField(() => Boolean)
+	open24Hours(@Parent() pharmacy: Pharmacy): boolean {
+		return pharmacy.open24Hours ?? false;
+	}
+
+	@ResolveField(() => String)
+	pharmacyTimezone(@Parent() pharmacy: Pharmacy): string {
+		return pharmacy.pharmacyTimezone ?? 'Asia/Tashkent';
+	}
+
+	@ResolveField(() => [PharmacyOperatingDay])
+	operatingHours(@Parent() pharmacy: Pharmacy): PharmacyOperatingDay[] {
+		return pharmacy.operatingHours ?? [];
+	}
+
+	@ResolveField(() => Boolean)
+	hoursConfigured(@Parent() pharmacy: Pharmacy): boolean {
+		return calculateOperatingStatus(pharmacy).hoursConfigured;
+	}
+
+	@ResolveField(() => Boolean)
+	isOpenNow(@Parent() pharmacy: Pharmacy): boolean {
+		return calculateOperatingStatus(pharmacy).isOpenNow;
+	}
+
+	@ResolveField(() => Date, { nullable: true })
+	nextOpeningAt(@Parent() pharmacy: Pharmacy): Date | undefined {
+		return calculateOperatingStatus(pharmacy).nextOpeningAt;
+	}
+
+	@ResolveField(() => Date, { nullable: true })
+	nextClosingAt(@Parent() pharmacy: Pharmacy): Date | undefined {
+		return calculateOperatingStatus(pharmacy).nextClosingAt;
+	}
 
 	@Roles(MemberType.AGENT)
 	@UseGuards(RolesGuard)

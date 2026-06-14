@@ -5,6 +5,21 @@ import { Member, TotalCounter } from '../member/member';
 import { MeLiked } from '../like/like';
 
 @ObjectType()
+export class PharmacyOperatingDay {
+	@Field(() => Int)
+	dayOfWeek: number;
+
+	@Field(() => Boolean)
+	isClosed: boolean;
+
+	@Field(() => String, { nullable: true })
+	opensAt?: string;
+
+	@Field(() => String, { nullable: true })
+	closesAt?: string;
+}
+
+@ObjectType()
 export class Pharmacy {
 	@Field(() => String)
 	_id: ObjectId;
@@ -59,6 +74,27 @@ export class Pharmacy {
 
 	@Field(() => Boolean)
 	hasDelivery: boolean;
+
+	@Field(() => Boolean)
+	open24Hours: boolean;
+
+	@Field(() => String)
+	pharmacyTimezone: string;
+
+	@Field(() => [PharmacyOperatingDay])
+	operatingHours: PharmacyOperatingDay[];
+
+	@Field(() => Boolean)
+	hoursConfigured: boolean;
+
+	@Field(() => Boolean)
+	isOpenNow: boolean;
+
+	@Field(() => Date, { nullable: true })
+	nextOpeningAt?: Date;
+
+	@Field(() => Date, { nullable: true })
+	nextClosingAt?: Date;
 
 	@Field(() => String)
 	memberId: ObjectId;

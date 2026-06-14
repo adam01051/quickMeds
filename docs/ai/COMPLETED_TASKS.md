@@ -137,3 +137,49 @@ The QuickMeds homepage hero and pharmacy search were incrementally redesigned us
 ## Canonical Public Pharmacy Routes
 
 The frontend public pharmacy catalog now uses `/pharmacies` and `/pharmacies/detail` as canonical URLs. Permanent redirects preserve existing `/property` and `/property/detail` bookmarks, including their query parameters. Backend GraphQL operations, pharmacy DTOs, and the `pharmacies` collection remain unchanged.
+# Delivery Fees And Operating Hours
+
+- Added UZS delivery normalization, structured weekly hours, explicit 24/7 support, computed Open now status, public filters, migration script, and focused tests.
+
+## Restart Stabilization Checkpoint
+
+- Backend production build, API TypeScript, batch TypeScript, and focused pharmacy tests passed.
+- Pharmacy-hours migration dry run reported zero missing timezone, schedule, 24/7, or basic delivery-fee normalization records.
+- Live GraphQL schema matches the frontend Pharmacy and PharmacyInquirySearch fields.
+- Public pharmacy and invalid-login GraphQL smoke checks passed.
+- Live catalog smoke testing found one legacy fractional delivery fee (`3.5`) that the current migration does not report.
+
+## Five Tashkent Demo Pharmacies
+
+Five `AGENT` owners and five MongoDB pharmacy records were created through the live GraphQL API. Every owner has `memberPharmacies: 1`, empty `memberImage`, and one active pharmacy.
+
+| Owner | Owner ID | Pharmacy | Pharmacy ID |
+| --- | --- | --- | --- |
+| `qm03owner` | `6a2e6275d8c061ecd2e6bbd1` | 03 Pharmacy — Shevchenko | `6a2e6275d8c061ecd2e6bbd3` |
+| `saidlabz` | `6a2e6275d8c061ecd2e6bbd8` | Said Labz Pharmacy | `6a2e6275d8c061ecd2e6bbda` |
+| `oxyfarhod` | `6a2e6276d8c061ecd2e6bbdf` | OXY Med — Farhod | `6a2e6276d8c061ecd2e6bbe1` |
+| `oxyqushbegi` | `6a2e6276d8c061ecd2e6bbe6` | OXY Med — Qushbegi | `6a2e6276d8c061ecd2e6bbe8` |
+| `oxyshahris` | `6a2e6276d8c061ecd2e6bbed` | OXY Med — Shahrisabz | `6a2e6276d8c061ecd2e6bbef` |
+
+Validation confirmed idempotent skipping, integer UZS fees, owner counters, fallback-image HTTP 200, Open-now/24/7/delivery filters, and homepage/catalog/detail rendering.
+
+## June 14, 2026 Backend And Integration Checkpoint
+
+- Confirmed the backend on `http://localhost:3007/graphql` is healthy. The observed `EADDRINUSE` failure came from attempting to start a second Nest instance while the existing watch server already owned port `3007`.
+- Implemented persisted integer UZS delivery-fee rules: delivery-enabled defaults, free delivery, pickup-only normalization, validation, delivery-fee filtering, and delivery-fee sorting.
+- Implemented pharmacy operating hours with `Asia/Tashkent`, explicit 24/7 support, optional weekly schedules, overnight intervals, computed Open-now state, and next opening/closing values.
+- Added inquiry support for `openNow` and `open24Hours`.
+- Added and executed the idempotent pharmacy-hours migration; fractional delivery-enabled fees are detected and normalized.
+- Created five Pharmacy Owner accounts and five active Tashkent pharmacy records through normal authenticated GraphQL operations; no frontend pharmacy records were hardcoded.
+- Added the shared backend-hosted pharmacy fallback image and preserved empty owner images so the frontend default user image is used.
+- Verified the live schema matches current frontend pharmacy queries and that homepage, catalog, pharmacy detail, owner, delivery-fee, Open-now, and 24/7 surfaces consume the backend contract.
+- Confirmed the latest public navbar and catalog-card visual migrations required no backend or GraphQL changes.
+
+Validation recorded for this checkpoint:
+
+- Focused pharmacy service tests passed: `5/5`.
+- API and batch TypeScript checks passed.
+- Backend production build passed.
+- Pharmacy-hours verification dry-run reports no remaining fractional or normalization work.
+- Backend and frontend `git diff --check` passed.
+- Live GraphQL health and pharmacy catalog queries passed.

@@ -1,9 +1,32 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { PharmacyLocation, PharmacyStatus, PharmacyType } from '../../enums/pharmacy.enum';
-import { IsIn, IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
+import { IsIn, IsInt, IsNotEmpty, IsOptional, Length, Max, Min, Matches, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ObjectId } from 'mongoose';
 import { availablePharmacySorts } from '../../config';
 import { Direction } from '../../enums/common.enum';
+
+@InputType()
+export class PharmacyOperatingDayInput {
+	@IsInt()
+	@Min(1)
+	@Max(7)
+	@Field(() => Int)
+	dayOfWeek: number;
+
+	@Field(() => Boolean)
+	isClosed: boolean;
+
+	@IsOptional()
+	@Matches(/^([01]\d|2[0-3]):[0-5]\d$/)
+	@Field(() => String, { nullable: true })
+	opensAt?: string;
+
+	@IsOptional()
+	@Matches(/^([01]\d|2[0-3]):[0-5]\d$/)
+	@Field(() => String, { nullable: true })
+	closesAt?: string;
+}
 
 @InputType()
 export class PharmacyInput {
@@ -25,9 +48,11 @@ export class PharmacyInput {
 	@Field(() => String)
 	pharmacyName: string;
 
-	@IsNotEmpty()
+	@IsOptional()
+	@IsInt()
+	@Min(0)
 	@Field(() => Number)
-	pharmacyDeliveryFee: number;
+	pharmacyDeliveryFee?: number;
 
 	@IsNotEmpty()
 	@Field(() => Number)
@@ -53,6 +78,20 @@ export class PharmacyInput {
 	@IsOptional()
 	@Field(() => Boolean, { nullable: true })
 	hasDelivery?: boolean;
+
+	@IsOptional()
+	@Field(() => Boolean, { nullable: true })
+	open24Hours?: boolean;
+
+	@IsOptional()
+	@Field(() => String, { nullable: true })
+	pharmacyTimezone?: string;
+
+	@IsOptional()
+	@ValidateNested({ each: true })
+	@Type(() => PharmacyOperatingDayInput)
+	@Field(() => [PharmacyOperatingDayInput], { nullable: true })
+	operatingHours?: PharmacyOperatingDayInput[];
 
 	@IsOptional()
 	@Field(() => Date, { nullable: true })
@@ -100,6 +139,14 @@ class PharmacyInquirySearch {
 	@IsOptional()
 	@Field(() => Boolean, { nullable: true })
 	hasDelivery?: boolean;
+
+	@IsOptional()
+	@Field(() => Boolean, { nullable: true })
+	openNow?: boolean;
+
+	@IsOptional()
+	@Field(() => Boolean, { nullable: true })
+	open24Hours?: boolean;
 
 	@IsOptional()
 	@Field(() => DeliveryFeeRange, { nullable: true })

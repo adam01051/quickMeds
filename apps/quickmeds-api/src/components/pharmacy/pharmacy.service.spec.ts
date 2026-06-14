@@ -4,7 +4,7 @@ jest.mock('../../libs/config', () => ({
 	shapeIntoMoongoObjectId: (target: any) => target,
 }));
 
-import { PharmacyService } from './pharmacy.service';
+import { calculateOperatingStatus, PharmacyService } from './pharmacy.service';
 import { LikeGroup } from '../../libs/enums/like.enum';
 import { PharmacyLocation, PharmacyStatus } from '../../libs/enums/pharmacy.enum';
 
@@ -26,6 +26,32 @@ describe('PharmacyService', () => {
 		findByIdAndUpdate: jest.fn(),
 		aggregate: jest.fn(),
 	};
+
+	it('calculates normal, overnight, 24/7, and missing-hour status', () => {
+		expect(calculateOperatingStatus({ open24Hours: true, operatingHours: [] } as any).isOpenNow).toBe(true);
+		expect(calculateOperatingStatus({ open24Hours: false, operatingHours: [] } as any).hoursConfigured).toBe(false);
+		expect(
+			calculateOperatingStatus(
+				{ open24Hours: false, operatingHours: [{ dayOfWeek: 1, isClosed: false, opensAt: '09:00', closesAt: '18:00' }] } as any,
+				new Date('2026-06-15T07:00:00.000Z'),
+			).isOpenNow,
+		).toBe(true);
+		expect(
+			calculateOperatingStatus(
+				{ open24Hours: false, operatingHours: [{ dayOfWeek: 1, isClosed: false, opensAt: '20:00', closesAt: '08:00' }] } as any,
+				new Date('2026-06-15T20:00:00.000Z'),
+			).isOpenNow,
+		).toBe(true);
+	});
+
+	it('defaults delivery-enabled pharmacies to 3000 UZS and clears disabled delivery fees', async () => {
+		pharmacyModel.create.mockImplementation(async (input) => ({ ...input, memberId: 'member-id' }));
+		await service.createPharmacy({ memberId: 'member-id', hasDelivery: true } as any);
+		expect(pharmacyModel.create).toHaveBeenLastCalledWith(expect.objectContaining({ pharmacyDeliveryFee: 3000 }));
+
+		await service.createPharmacy({ memberId: 'member-id', hasDelivery: false, pharmacyDeliveryFee: 9000 } as any);
+		expect(pharmacyModel.create).toHaveBeenLastCalledWith(expect.objectContaining({ pharmacyDeliveryFee: 0 }));
+	});
 
 	let service: PharmacyService;
 

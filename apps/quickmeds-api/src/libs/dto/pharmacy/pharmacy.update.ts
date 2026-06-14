@@ -1,8 +1,10 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { ObjectId } from 'mongoose';
 import { PharmacyLocation, PharmacyStatus, PharmacyType } from '../../enums/pharmacy.enum';
+import { PharmacyOperatingDayInput } from './pharmacy.input';
 
-import { IsNotEmpty, IsOptional, Length, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, Length, Min, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 @InputType()
 export class PharmacyUpdate {
@@ -33,6 +35,9 @@ export class PharmacyUpdate {
 	pharmacyName?: string;
 
 	@Field(() => Number, { nullable: true })
+	@IsOptional()
+	@IsInt()
+	@Min(0)
 	pharmacyDeliveryFee?: number;
 
 	@IsOptional()
@@ -64,6 +69,20 @@ export class PharmacyUpdate {
 	@IsOptional()
 	@Field(() => Boolean, { nullable: true })
 	hasDelivery?: boolean;
+
+	@IsOptional()
+	@Field(() => Boolean, { nullable: true })
+	open24Hours?: boolean;
+
+	@IsOptional()
+	@Field(() => String, { nullable: true })
+	pharmacyTimezone?: string;
+
+	@IsOptional()
+	@ValidateNested({ each: true })
+	@Type(() => PharmacyOperatingDayInput)
+	@Field(() => [PharmacyOperatingDayInput], { nullable: true })
+	operatingHours?: PharmacyOperatingDayInput[];
 
 	verifiedAt?: Date;
 
