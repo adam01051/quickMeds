@@ -56,3 +56,4 @@ Pharmacy discovery is authoritative. Do not introduce medicine catalog, inventor
 4. Add authenticated integration smoke coverage for owner create/edit, favorites, and recently visited.
 5. Confirm, replace, or remove all demo owners/pharmacies before production.
 6. Keep medicine catalog, inventory, prescription, and price-comparison workflows outside the pharmacy-discovery scope.
+7. Add an authenticated GraphQL smoke test that creates a pharmacy comment and confirms it remains first in the filtered query.

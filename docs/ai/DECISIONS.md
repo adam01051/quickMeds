@@ -40,3 +40,5 @@
 - The five Tashkent demo records remain development-only, unverified records and must be confirmed, replaced, or removed before production.
 - Public visual migrations may hide legacy fields such as medication count, rank, views, and likes without removing the backend fields during the same micro-phase.
 - Only one backend process should bind port `3007`; `EADDRINUSE` indicates a duplicate launcher, not a GraphQL contract failure.
+- `CommentsInquiry.search.commentGroup` is an optional additive filter; pharmacy-detail callers use `PHARMACY`, while existing callers may continue omitting it.
+- Missing member lookup data must not remove an otherwise active comment from public query results.

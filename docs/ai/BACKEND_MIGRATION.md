@@ -78,3 +78,10 @@ Run `npm run migrate:pharmacy-hours -- --dry-run`, review counts, back up the da
 - No permanent demo-data seed framework was added; records were created through normal GraphQL signup and create-pharmacy behavior.
 - The backend-hosted fallback image remains required while demo pharmacy records reference it.
 - Before production, back up the database, remove or verify demo records, and rerun the pharmacy-hours migration in dry-run mode.
+
+## Comment Query Compatibility
+
+- `CommentsInquiry.search.commentGroup` is optional and requires no data migration.
+- Existing clients that query comments only by reference ID remain compatible.
+- Pharmacy-detail clients should send `PHARMACY` to prevent cross-group comment leakage.
+- Existing comments with missing member records now remain queryable and use frontend fallback member presentation.

@@ -183,3 +183,17 @@ Validation recorded for this checkpoint:
 - Pharmacy-hours verification dry-run reports no remaining fractional or normalization work.
 - Backend and frontend `git diff --check` passed.
 - Live GraphQL health and pharmacy catalog queries passed.
+
+## Pharmacy Comment Persistence Hardening
+
+- Added the optional `CommentsInquiry.search.commentGroup` filter so pharmacy-detail feedback can be isolated from article/member comments.
+- Preserved active comments when the referenced member lookup is missing instead of dropping them during aggregation.
+- Confirmed pharmacy comment creation updates the pharmacy comment counter and newest-first queries use `createdAt DESC`.
+- Added focused comment-service coverage for creation, pharmacy-group isolation, newest-first sorting, and missing-member preservation.
+
+Validation completed:
+
+- Focused comment and pharmacy service tests passed: `7/7`.
+- API and batch TypeScript checks passed.
+- Backend and frontend production builds passed.
+- Backend and frontend `git diff --check` passed.

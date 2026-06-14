@@ -350,3 +350,10 @@ Remaining backend capabilities requested by future frontend phases:
 - GeoJSON/radius/current-location search with returned distance;
 - structured Uzbekistan city/district/address fields and filtering;
 - production-grade verification and cleanup of development demo records.
+
+## Comment Contract
+
+- `CommentsInquiry.search.commentGroup` is an optional `CommentGroup` filter.
+- Pharmacy detail must send `commentGroup: PHARMACY`.
+- Comment lists remain newest-first when requested with `sort: createdAt` and `direction: DESC`.
+- Active comments remain visible when member lookup data is unavailable; frontends must use their existing fallback member presentation.
