@@ -85,3 +85,15 @@ Run `npm run migrate:pharmacy-hours -- --dry-run`, review counts, back up the da
 - Existing clients that query comments only by reference ID remain compatible.
 - Pharmacy-detail clients should send `PHARMACY` to prevent cross-group comment leakage.
 - Existing comments with missing member records now remain queryable and use frontend fallback member presentation.
+
+## Admin Member Query Compatibility
+
+- `getAllMembersByAdmin` is now correctly exposed under the GraphQL `Query` type.
+- Clients that incorrectly invoked this read operation as a mutation must switch to a query.
+- `updateMemberByAdmin` remains a mutation, and no database migration is required.
+
+## Admin Pharmacy Status Compatibility
+
+- `updatePharmacyByAdmin` now supports admin transitions between non-deleted `HOLD`, `ACTIVE`, `CLOSED`, and `DELETE` pharmacy statuses.
+- Records already in `DELETE` remain immutable through status update and are handled only by `removePharmacyByAdmin`.
+- `memberPharmacies` is adjusted only when a pharmacy changes between active and non-active visibility.

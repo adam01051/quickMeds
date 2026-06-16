@@ -32,6 +32,12 @@
 - Demo records remain unverified because only admins may set `verifiedAt`.
 - Demo owners use normal signup and pharmacy creation logic; no frontend hardcoded pharmacy records are allowed.
 
+## Admin Member Query Contract
+
+- `getAllMembersByAdmin` is a read operation and is exposed under the GraphQL `Query` type.
+- Its admin authorization, inquiry input, member service behavior, and response remain unchanged.
+- `updateMemberByAdmin` remains a mutation.
+
 # June 14, 2026 Backend Decisions
 
 - Operating status is backend-computed truth. Frontends must not infer Open now or 24/7 from `openedAt`, descriptions, or visual labels.

@@ -182,6 +182,23 @@ Validation recorded for this checkpoint:
 - Backend production build passed.
 - Pharmacy-hours verification dry-run reports no remaining fractional or normalization work.
 - Backend and frontend `git diff --check` passed.
+
+## Admin Member Query Contract Fix
+
+- Corrected `getAllMembersByAdmin` in `member.resolver.ts` from a GraphQL mutation to a GraphQL query.
+- Preserved its admin authorization guard, `MembersInquiry` input, `Members` response, and member-service call.
+- Kept `updateMemberByAdmin` as a mutation.
+
+Validation completed:
+
+- Live schema introspection on port `3007` lists `getAllMembersByAdmin` under `Query` and not under `Mutation`.
+- A live unauthenticated query reaches the expected bearer-token authorization guard instead of returning `Cannot query field`.
+- API and batch TypeScript checks passed.
+- Backend production build and `git diff --check` passed.
+
+Remaining verification:
+
+- Authenticated Admin Users list, search, filter, pagination, and update behavior requires an available admin browser session.
 - Live GraphQL health and pharmacy catalog queries passed.
 
 ## Pharmacy Comment Persistence Hardening
@@ -197,3 +214,10 @@ Validation completed:
 - API and batch TypeScript checks passed.
 - Backend and frontend production builds passed.
 - Backend and frontend `git diff --check` passed.
+
+## Admin Pharmacy Status Transition Fix
+
+- Updated `updatePharmacyByAdmin` so admins can transition non-deleted pharmacies between `HOLD`, `ACTIVE`, `CLOSED`, and `DELETE` instead of only updating pharmacies currently in `ACTIVE` status.
+- Permanently deleted pharmacies remain protected from status updates and must use the dedicated removal flow.
+- Owner `memberPharmacies` counters now adjust only when the pharmacy crosses the active/non-active boundary, preventing repeated close operations from double-decrementing counts.
+- Validation: `npm run build` passed and backend `git diff --check` passed.

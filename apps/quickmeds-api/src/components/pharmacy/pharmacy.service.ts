@@ -312,10 +312,10 @@ export class PharmacyService {
 		this.normalizePharmacyInput(input);
 		let { deletedAt } = input;
 		const { pharmacyStatus } = input;
-		const search: T = {
-			_id: input._id,
-			pharmacyStatus: PharmacyStatus.ACTIVE,
-		};
+
+		const existing = await this.pharmacyModel.findOne({ _id: input._id }).exec();
+		if (!existing) throw new InternalServerErrorException(Message.UPDATE_FAILED);
+		if (existing.pharmacyStatus === PharmacyStatus.DELETE) throw new BadRequestException(Message.NOT_ALLOWED_REQUEST);
 
 		if (pharmacyStatus === PharmacyStatus.DELETE) {
 			deletedAt = moment().toDate();
@@ -323,18 +323,20 @@ export class PharmacyService {
 		}
 
 		const result = await this.pharmacyModel
-			.findOneAndUpdate(search, input, {
+			.findOneAndUpdate({ _id: input._id, pharmacyStatus: { $ne: PharmacyStatus.DELETE } }, input, {
 				new: true,
 			})
 			.exec();
 
 		if (!result) throw new InternalServerErrorException(Message.UPDATE_FAILED);
 
-		if (pharmacyStatus === PharmacyStatus.CLOSED || deletedAt) {
+		const wasActive = existing.pharmacyStatus === PharmacyStatus.ACTIVE;
+		const isActive = result.pharmacyStatus === PharmacyStatus.ACTIVE;
+		if (wasActive !== isActive) {
 			await this.memberService.memberStatsEditor({
 				_id: result.memberId,
 				targetKey: 'memberPharmacies',
-				modifier: -1,
+				modifier: isActive ? 1 : -1,
 			});
 		}
 
