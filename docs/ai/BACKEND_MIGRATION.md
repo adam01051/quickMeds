@@ -97,3 +97,21 @@ Run `npm run migrate:pharmacy-hours -- --dry-run`, review counts, back up the da
 - `updatePharmacyByAdmin` now supports admin transitions between non-deleted `HOLD`, `ACTIVE`, `CLOSED`, and `DELETE` pharmacy statuses.
 - Records already in `DELETE` remain immutable through status update and are handled only by `removePharmacyByAdmin`.
 - `memberPharmacies` is adjusted only when a pharmacy changes between active and non-active visibility.
+## One-To-One Messaging Backend Migration
+
+- Added a new `message` module with schema, DTO, service, resolver, and module wiring.
+- New MongoDB collections:
+  - `message_threads`
+  - `messages`
+- `message_threads` has a unique participant/pharmacy index for `customerId + ownerId + pharmacyId` and participant inbox indexes.
+- `messages` has thread/date indexes for paginated history.
+- Existing pharmacy/member data is not migrated; threads are created lazily when a customer starts a conversation.
+- The existing upload resolver now creates the requested upload target directory before saving files, allowing `uploads/messages`.
+- No destructive database migration is required for the MVP.
+
+Rollback:
+
+- Remove the `MessageModule` import from `components.module.ts`.
+- Remove the message schema/DTO/service/resolver/module files.
+- Remove the message-specific raw WebSocket event handlers and exported gateway usage.
+- Optionally drop `message_threads` and `messages` from a development database if test data was created.

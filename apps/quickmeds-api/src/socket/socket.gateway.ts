@@ -15,21 +15,29 @@ import * as url from 'url';
 interface MessagePayload {
 	event: string;
 	text: string;
-	memberData: Member;
+	memberData: Member | null;
 }
 
 interface InfoPayload {
 	event: string;
 	totalClients: number;
-	memberData: Member;
+	memberData: Member | null;
 	action: string;
+}
+
+interface DirectMessagePayload {
+	event: string;
+	threadId?: string;
+	messageId?: string;
+	count?: number;
 }
 
 @WebSocketGateway({ transports: ['websocket'], secure: false })
 export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
 	private logger: Logger = new Logger('SocketEventsGateway');
 	private summaryClients: number = 0;
-	private clientAuthMap = new Map<WebSocket, Member>();
+	private clientAuthMap = new Map<WebSocket, Member | null>();
+	private memberClientMap = new Map<string, Set<WebSocket>>();
 	private messageList: MessagePayload[] = [];
 
 	constructor(private authService: AuthService) {}
@@ -57,6 +65,12 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		const authMember = await this.retrieveAuth(req);
 		this.summaryClients++;
 		this.clientAuthMap.set(client, authMember);
+		if (authMember?._id) {
+			const memberId = String(authMember._id);
+			const memberClients = this.memberClientMap.get(memberId) ?? new Set<WebSocket>();
+			memberClients.add(client);
+			this.memberClientMap.set(memberId, memberClients);
+		}
 		const clientNick: string = authMember?.memberNick ?? 'Guest';
 		this.logger.verbose(`Connection [${clientNick}] & total [${this.summaryClients}]`);
 
@@ -78,6 +92,12 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
 		this.summaryClients--; // Decrement FIRST
 		this.clientAuthMap.delete(client);
+		if (authMember?._id) {
+			const memberId = String(authMember._id);
+			const memberClients = this.memberClientMap.get(memberId);
+			memberClients?.delete(client);
+			if (memberClients && memberClients.size === 0) this.memberClientMap.delete(memberId);
+		}
 
 		const clientNick: string = authMember?.memberNick ?? 'Guest';
 
@@ -111,6 +131,30 @@ export class SocketGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 		if (this.messageList.length > 5) this.messageList.splice(0, this.messageList.length - 5);
 
 		this.emitMessage(newMessage); // Sends to everyone
+	}
+
+	@SubscribeMessage('message:join')
+	public async handleDirectMessageJoin(client: WebSocket): Promise<void> {
+		const authMember = this.clientAuthMap.get(client);
+		if (!authMember?._id || client.readyState !== WebSocket.OPEN) return;
+		client.send(JSON.stringify({ event: 'message:joined', memberId: String(authMember._id) }));
+	}
+
+	@SubscribeMessage('message:read')
+	public async handleDirectMessageRead(client: WebSocket, payload: string): Promise<void> {
+		const authMember = this.clientAuthMap.get(client);
+		if (!authMember?._id || client.readyState !== WebSocket.OPEN) return;
+		client.send(JSON.stringify({ event: 'message:read', threadId: payload }));
+	}
+
+	public emitMessageEventToMembers(memberIds: Array<string | Object>, message: DirectMessagePayload) {
+		const uniqueMemberIds = Array.from(new Set(memberIds.map((memberId) => String(memberId))));
+		uniqueMemberIds.forEach((memberId) => {
+			const clients = this.memberClientMap.get(memberId);
+			clients?.forEach((client) => {
+				if (client.readyState === WebSocket.OPEN) client.send(JSON.stringify(message));
+			});
+		});
 	}
 
 	// 4. Fixed type definitions to support both payloads

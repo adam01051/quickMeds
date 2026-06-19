@@ -95,3 +95,12 @@ Deferred frontend/backend integration:
 - current-location radius/distance search;
 - structured city/district search;
 - remaining Nestar catalog shell, Favorites/Recently Visited cards, owner/admin presentation, mobile navigation/catalog, and footer content.
+## One-To-One Messaging Frontend Integration
+
+- Frontend consumes the additive backend message contract through Apollo queries and mutations.
+- Pharmacy detail starts or reuses a pharmacy-context conversation using `startPharmacyConversation`.
+- My Page inbox reads `getMyMessageThreads`, `getMessages`, and `getUnreadMessageCount`.
+- Read state is cleared through `markMessageThreadRead`.
+- Message images are uploaded first through the existing upload flow with `target: messages`, then sent as image paths.
+- Header unread badges are refreshed from GraphQL and raw WebSocket `message:unreadCount` events.
+- Current global chat remains separate from the new pharmacy messaging UI.

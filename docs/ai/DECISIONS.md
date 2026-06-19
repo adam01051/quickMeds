@@ -48,3 +48,13 @@
 - Only one backend process should bind port `3007`; `EADDRINUSE` indicates a duplicate launcher, not a GraphQL contract failure.
 - `CommentsInquiry.search.commentGroup` is an optional additive filter; pharmacy-detail callers use `PHARMACY`, while existing callers may continue omitting it.
 - Missing member lookup data must not remove an otherwise active comment from public query results.
+## One-To-One Messaging Decisions
+
+- Add pharmacy-context messaging as a separate backend `message` feature, not as a replacement for the existing global raw chat.
+- Use raw WebSocket events to match the current project direction; do not introduce Socket.IO for this phase.
+- Persist conversation data in MongoDB using `message_threads` and `messages`.
+- Keep one thread per `customerId + ownerId + pharmacyId`.
+- Derive the Pharmacy Owner from the pharmacy record when starting a conversation.
+- Use GraphQL as the source of truth for creation, message persistence, unread counts, and read state.
+- Save uploaded message images through the existing upload flow under `uploads/messages`.
+- Keep delete/archive, blocking, typing indicators, chatbot integration, moderation, and non-image attachments deferred.

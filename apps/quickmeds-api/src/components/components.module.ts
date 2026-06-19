@@ -7,6 +7,7 @@ import { BoardArticleModule } from './board-article/board-article.module';
 import { ViewModule } from './view/view.module';
 import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
+import { MessageModule } from './message/message.module';
 
 @Module({
 	imports: [
@@ -16,6 +17,7 @@ import { CommentModule } from './comment/comment.module';
 		FollowModule,
 		BoardArticleModule,
 		CommentModule,
+		MessageModule,
 		LikeModule,
 		ViewModule,
 	],

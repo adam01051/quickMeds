@@ -357,3 +357,38 @@ Remaining backend capabilities requested by future frontend phases:
 - Pharmacy detail must send `commentGroup: PHARMACY`.
 - Comment lists remain newest-first when requested with `sort: createdAt` and `direction: DESC`.
 - Active comments remain visible when member lookup data is unavailable; frontends must use their existing fallback member presentation.
+
+## One-To-One Messaging Contract
+
+GraphQL additions:
+
+```graphql
+getMyMessageThreads(input: MessageThreadsInquiry!): MessageThreads!
+getMessages(input: MessagesInquiry!): Messages!
+getUnreadMessageCount: Int!
+startPharmacyConversation(input: StartPharmacyConversationInput!): MessageThread
+sendMessage(input: SendMessageInput!): Message
+markMessageThreadRead(threadId: String!): MessageThread
+```
+
+Thread behavior:
+
+- One thread per `customerId + ownerId + pharmacyId`.
+- Starting a conversation derives the owner from the pharmacy record.
+- A member cannot start a conversation with themselves through their own pharmacy.
+- Only participants may read, send, or mark a thread as read.
+- Unread counters are maintained separately for customer and owner and surfaced as `myUnreadCount`.
+
+Message behavior:
+
+- A message must contain text or at least one image.
+- Message text is capped by the backend DTO.
+- Image paths must be saved under `uploads/messages` and must be JPG, JPEG, or PNG paths.
+- `markMessageThreadRead` sets unread count to zero for the current participant and marks received unread messages with `readAt`.
+
+Raw WebSocket events:
+
+- Client events: `message:join`, `message:send`, `message:read`
+- Server events: `message:new`, `message:threadUpdated`, `message:unreadCount`, `message:read`
+
+Existing global chat events remain reserved for the old/global chat.
