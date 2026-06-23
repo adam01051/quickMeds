@@ -52,7 +52,8 @@ export class MessageService {
 
 	public async sendMessage(memberId: ObjectId, input: SendMessageInput): Promise<Message> {
 		const thread = await this.getRawThreadForParticipant(memberId, shapeIntoMoongoObjectId(input.threadId));
-		return await this.createMessage(memberId, thread, input);
+		const message = await this.createMessage(memberId, thread, input);
+		return await this.getMessageById(memberId, message._id);
 	}
 
 	public async getMyMessageThreads(memberId: ObjectId, input: MessageThreadsInquiry): Promise<MessageThreads> {
@@ -224,6 +225,30 @@ export class MessageService {
 			.exec();
 		if (!threads[0]) throw new InternalServerErrorException(ErrorMessage.NO_DATA_FOUND);
 		return threads[0];
+	}
+
+	private async getMessageById(memberId: ObjectId, messageId: ObjectId): Promise<Message> {
+		const pipeline: PipelineStage[] = [
+				{ $match: { _id: messageId, messageStatus: MessageStatus.ACTIVE } },
+				this.lookupMember('senderId', 'senderData'),
+				{ $unwind: { path: '$senderData', preserveNullAndEmptyArrays: true } },
+				{
+					$lookup: {
+						from: 'message_threads',
+						localField: 'threadId',
+						foreignField: '_id',
+						as: 'threadData',
+					},
+				},
+				{ $unwind: { path: '$threadData', preserveNullAndEmptyArrays: true } },
+				{ $match: { $or: [{ 'threadData.customerId': memberId }, { 'threadData.ownerId': memberId }] } },
+				{ $project: { threadData: 0 } },
+			];
+		const messages = await this.messageModel
+			.aggregate(pipeline)
+			.exec();
+		if (!messages[0]) throw new InternalServerErrorException(ErrorMessage.NO_DATA_FOUND);
+		return messages[0];
 	}
 
 	private async getRawThreadForParticipant(memberId: ObjectId, threadId: ObjectId): Promise<MessageThread> {

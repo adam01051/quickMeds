@@ -30,6 +30,7 @@ interface DirectMessagePayload {
 	threadId?: string;
 	messageId?: string;
 	count?: number;
+	message?: Record<string, unknown>;
 }
 
 @WebSocketGateway({ transports: ['websocket'], secure: false })

@@ -78,6 +78,14 @@ export class MessageResolver {
 			event: 'message:new',
 			threadId: String(message.threadId),
 			messageId: String(message._id),
+			message: {
+				...message,
+				_id: String(message._id),
+				threadId: String(message.threadId),
+				senderId: String(message.senderId),
+				receiverId: String(message.receiverId),
+				pharmacyId: String(message.pharmacyId),
+			},
 		});
 		await this.emitUnreadCounts(message.senderId, message.receiverId);
 		return message;
