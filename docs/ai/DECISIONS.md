@@ -58,3 +58,12 @@
 - Use GraphQL as the source of truth for creation, message persistence, unread counts, and read state.
 - Save uploaded message images through the existing upload flow under `uploads/messages`.
 - Keep delete/archive, blocking, typing indicators, chatbot integration, moderation, and non-image attachments deferred.
+
+## QuickMeds Assistant Decision
+
+- The floating global chat surface is now the QuickMeds Assistant, separate from pharmacy one-to-one Messages.
+- Assistant requests use an isolated REST endpoint, not GraphQL message mutations, raw WebSocket events, Socket.IO, Assistant Cloud, or frontend provider keys.
+- The backend owns Gemini provider configuration through server-only `GEMINI_API_KEY` and optional `GEMINI_MODEL`; no provider key is exposed to the frontend.
+- The default assistant model is `gemini-3.1-flash-lite` because it is a current Google AI Studio Flash-Lite model with Free Tier availability for text output and fits a small platform-support chatbot.
+- Missing provider configuration returns `not_configured`; Gemini quota/rate-limit failures return `rate_limited`; provider availability failures return `unavailable`.
+- The assistant is limited to QuickMeds platform support and must refuse medical or medicine-advice requests with the approved safety text.

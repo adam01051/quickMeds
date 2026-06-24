@@ -104,3 +104,14 @@ Deferred frontend/backend integration:
 - Message images are uploaded first through the existing upload flow with `target: messages`, then sent as image paths.
 - Header unread badges are refreshed from GraphQL and raw WebSocket `message:unreadCount` events.
 - Current global chat remains separate from the new pharmacy messaging UI.
+
+## QuickMeds Assistant Backend Integration
+
+- Added a REST support endpoint at `POST /api/v1/chatbot/message` for the frontend QuickMeds Assistant; this is intentionally separate from GraphQL pharmacy messaging.
+- The endpoint accepts `{ message, history?, locale? }` and returns `{ message, actions?, status }` for non-streaming v1 compatibility.
+- Provider credentials remain server-only through `GEMINI_API_KEY` and optional `GEMINI_MODEL`.
+- The backend uses Google Gemini API through Google AI Studio with the official `@google/genai` SDK and defaults to `gemini-3.1-flash-lite`, a Free Tier eligible Flash-Lite model suited to small text-only platform-support answers.
+- Medical or medicine-advice requests are blocked before provider execution with the exact required safety response.
+- Missing provider configuration returns a truthful `not_configured` assistant response instead of mock answers.
+- Gemini quota/rate-limit failures return `rate_limited`; other provider availability failures return `unavailable`.
+- The public chatbot endpoint now has a lightweight in-memory IP rate limiter for basic abuse protection.

@@ -221,3 +221,21 @@ Validation completed:
 - Permanently deleted pharmacies remain protected from status updates and must use the dedicated removal flow.
 - Owner `memberPharmacies` counters now adjust only when the pharmacy crosses the active/non-active boundary, preventing repeated close operations from double-decrementing counts.
 - Validation: `npm run build` passed and backend `git diff --check` passed.
+
+## QuickMeds Assistant Backend Endpoint
+
+- Added an isolated `ChatbotModule` with `POST /api/v1/chatbot/message` for the frontend QuickMeds Assistant.
+- Added DTO validation for message text, optional local history, and locale while preserving the existing global `ValidationPipe`, CORS, and logging setup.
+- Replaced the original OpenAI-compatible provider adapter with Google Gemini API through Google AI Studio using the official `@google/genai` SDK.
+- Gemini provider configuration is backend-only through `GEMINI_API_KEY` and optional `GEMINI_MODEL`; the default model is `gemini-3.1-flash-lite`.
+- Missing Gemini provider env returns a safe `not_configured` response, and provider quota or availability failures return user-friendly `rate_limited` or `unavailable` responses.
+- Added a small QuickMeds platform knowledge source and exact medical-advice refusal guard. The endpoint does not expose provider keys, use Assistant Cloud, add Socket.IO, or change GraphQL messaging contracts.
+- Added a lightweight in-memory IP rate limiter for the public chatbot endpoint with a conservative 10 requests per minute limit.
+
+Validation completed:
+
+- `npx tsc -p apps/quickmeds-api/tsconfig.app.json --noEmit` passed.
+- `npx tsc -p apps/quickmeds-batch/tsconfig.app.json --noEmit` passed.
+- `npm run build` passed.
+- Local `ChatbotService` smoke verified missing-provider `not_configured`, exact medical refusal text, and 11th same-client request `rate_limited`.
+- Backend `git diff --check` passed.

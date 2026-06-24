@@ -8,6 +8,7 @@ import { ViewModule } from './view/view.module';
 import { LikeModule } from './like/like.module';
 import { CommentModule } from './comment/comment.module';
 import { MessageModule } from './message/message.module';
+import { ChatbotModule } from './chatbot/chatbot.module';
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { MessageModule } from './message/message.module';
 		MessageModule,
 		LikeModule,
 		ViewModule,
+		ChatbotModule,
 	],
 })
 export class ComponentsModule {}

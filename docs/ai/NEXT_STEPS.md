@@ -58,3 +58,5 @@ Pharmacy discovery is authoritative. Do not introduce medicine catalog, inventor
 6. Keep medicine catalog, inventory, prescription, and price-comparison workflows outside the pharmacy-discovery scope.
 7. Add an authenticated GraphQL smoke test that creates a pharmacy comment and confirms it remains first in the filtered query.
 8. Complete an authenticated Admin Users smoke check covering member list, search, type/status filters, pagination, and member updates.
+9. Restart the API server after deploying the chatbot module and smoke test `POST /api/v1/chatbot/message` for missing-provider, platform-support, out-of-scope, medical-advice, and local rate-limit prompts.
+10. Configure backend-only `GEMINI_API_KEY` and optional `GEMINI_MODEL` before expecting live Gemini assistant answers.
