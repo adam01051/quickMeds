@@ -392,3 +392,14 @@ Raw WebSocket events:
 - Server events: `message:new`, `message:threadUpdated`, `message:unreadCount`, `message:read`
 
 Existing global chat events remain reserved for the old/global chat.
+
+## Pharmacy Owner Location Picker Contract
+
+The frontend owner create/edit flow now hides raw coordinate fields and requires owners to confirm a map pin before submitting. The backend contract remains scalar for this phase:
+
+- `pharmacyLatitude`
+- `pharmacyLongitude`
+
+Backend validation rejects coordinate writes when latitude and longitude are not supplied together, are not finite numbers, fall outside valid latitude/longitude ranges, or equal `0,0`.
+
+OSM/Leaflet and Nominatim are frontend provider choices only. The backend does not call geocoding services in this phase. GeoJSON `Point`, `2dsphere` indexes, distance queries, structured address fields, and duplicate-near-coordinate checks remain deferred backend capabilities.

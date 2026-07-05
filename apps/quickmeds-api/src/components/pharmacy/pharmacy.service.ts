@@ -344,6 +344,7 @@ export class PharmacyService {
 	}
 
 	private normalizePharmacyInput(input: PharmacyInput | PharmacyUpdate): void {
+		this.validateCoordinates(input);
 		if (input.hasDelivery === false) input.pharmacyDeliveryFee = 0;
 		if (input.hasDelivery === true && input.pharmacyDeliveryFee === undefined) input.pharmacyDeliveryFee = DEFAULT_DELIVERY_FEE;
 		if (input.pharmacyDeliveryFee !== undefined && (!Number.isInteger(input.pharmacyDeliveryFee) || input.pharmacyDeliveryFee < 0)) {
@@ -366,6 +367,30 @@ export class PharmacyService {
 					throw new BadRequestException('Open days require different valid HH:mm opening and closing times.');
 				}
 			});
+		}
+	}
+
+	private validateCoordinates(input: PharmacyInput | PharmacyUpdate): void {
+		const hasLatitude = input.pharmacyLatitude !== undefined;
+		const hasLongitude = input.pharmacyLongitude !== undefined;
+		if (!hasLatitude && !hasLongitude) return;
+		if (!hasLatitude || !hasLongitude) {
+			throw new BadRequestException('Pharmacy latitude and longitude must be provided together.');
+		}
+
+		const { pharmacyLatitude, pharmacyLongitude } = input;
+		if (
+			typeof pharmacyLatitude !== 'number' ||
+			typeof pharmacyLongitude !== 'number' ||
+			!Number.isFinite(pharmacyLatitude) ||
+			!Number.isFinite(pharmacyLongitude) ||
+			pharmacyLatitude < -90 ||
+			pharmacyLatitude > 90 ||
+			pharmacyLongitude < -180 ||
+			pharmacyLongitude > 180 ||
+			(pharmacyLatitude === 0 && pharmacyLongitude === 0)
+		) {
+			throw new BadRequestException('Pharmacy location must use a valid confirmed latitude and longitude.');
 		}
 	}
 

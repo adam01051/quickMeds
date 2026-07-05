@@ -67,3 +67,17 @@
 - The default assistant model is `gemini-3.1-flash-lite` because it is a current Google AI Studio Flash-Lite model with Free Tier availability for text output and fits a small platform-support chatbot.
 - Missing provider configuration returns `not_configured`; Gemini quota/rate-limit failures return `rate_limited`; provider availability failures return `unavailable`.
 - The assistant is limited to QuickMeds platform support and must refuse medical or medicine-advice requests with the approved safety text.
+
+## Pharmacy Coordinate Validation Decision
+
+- Keep the current scalar `pharmacyLatitude` and `pharmacyLongitude` GraphQL contract for owner create/edit while the frontend moves to an address-first map-pin picker.
+- Backend create/update validation rejects invalid coordinate scalars, including missing coordinate pairs, non-finite values, out-of-range latitude/longitude, and `0,0`.
+- GeoJSON `Point` storage, `2dsphere` indexing, distance search, and duplicate-near-coordinate detection remain deferred until the distance-search backend phase is approved.
+
+## Telegram Login Decision
+
+- Telegram login uses Telegram OpenID Connect authorization-code flow with PKCE through backend REST endpoints, not the legacy iframe widget.
+- The backend stores short-lived one-time login attempts and login tickets in MongoDB, while the frontend exchanges only an opaque ticket for the normal QuickMeds JWT.
+- Telegram identities are stored separately in `auth_identities` with unique `provider + providerSubject`; Telegram usernames are profile data only and are not trusted as identity.
+- New Telegram identities create normal `USER` members with `MemberAuthType.TELEGRAM`; Pharmacy Owner permissions are never granted automatically from Telegram login.
+- The v1 scope is `openid profile`; `phone`, `telegram:bot_access`, account-linking UI, notifications, and HttpOnly-cookie auth migration remain deferred.

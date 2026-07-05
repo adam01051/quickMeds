@@ -115,3 +115,22 @@ Rollback:
 - Remove the message schema/DTO/service/resolver/module files.
 - Remove the message-specific raw WebSocket event handlers and exported gateway usage.
 - Optionally drop `message_threads` and `messages` from a development database if test data was created.
+
+## Telegram OIDC Login Backend Migration
+
+- Added backend-owned Telegram login endpoints under `/auth/telegram`: `start`, `callback`, and `exchange`.
+- Telegram login uses authorization-code flow with PKCE, server-side token exchange, Telegram JWKS verification, and issuer/audience/expiry validation.
+- Added additive MongoDB collections:
+  - `auth_identities`
+  - `telegram_login_attempts`
+  - `telegram_login_tickets`
+- `auth_identities` stores the stable Telegram OIDC `sub` as `providerSubject` and has a unique `provider + providerSubject` index.
+- Login attempts and tickets are short-lived, hashed, one-time records with TTL indexes.
+- New Telegram users are normal `USER` members with `MemberAuthType.TELEGRAM`, generated internal nickname/phone values, and random non-usable password hashes.
+- No existing members, pharmacy records, GraphQL auth operations, or WebSocket auth behavior are migrated.
+
+Rollback:
+
+- Remove the Telegram controller/service and the additional model registrations from `AuthModule`.
+- Remove the three Telegram/auth identity schemas and optionally drop their development collections.
+- Remove `jose` if no other OIDC/JWT verification code uses it.

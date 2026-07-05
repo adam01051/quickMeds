@@ -239,3 +239,36 @@ Validation completed:
 - `npm run build` passed.
 - Local `ChatbotService` smoke verified missing-provider `not_configured`, exact medical refusal text, and 11th same-client request `rate_limited`.
 - Backend `git diff --check` passed.
+
+## Pharmacy Coordinate Validation
+
+- Added backend validation for existing scalar pharmacy coordinate fields without changing the GraphQL schema or MongoDB model shape.
+- `createPharmacy`, `updatePharmacy`, and admin pharmacy updates now reject coordinate updates where latitude/longitude are not provided together, are non-finite, outside valid latitude/longitude ranges, or are `0,0`.
+- Kept GeoJSON, `2dsphere` indexing, radius search, distance sorting, and duplicate-near-coordinate detection deferred to the approved distance-search phase.
+
+Validation completed:
+
+- `npx tsc -p apps/quickmeds-api/tsconfig.app.json --noEmit` passed.
+- Focused pharmacy service tests passed: `7/7`.
+- `npm run build` passed.
+- Backend `git diff --check` passed.
+
+## Telegram OIDC Login Backend
+
+- Added Telegram OpenID Connect login support through backend REST endpoints: `/auth/telegram/start`, `/auth/telegram/callback`, and `/auth/telegram/exchange`.
+- Added PKCE authorization URL generation, one-time state storage, server-side code exchange, Telegram ID-token validation with JWKS, and one-time ticket exchange for the normal QuickMeds JWT.
+- Added `auth_identities`, `telegram_login_attempts`, and `telegram_login_tickets` schemas with unique/TTL indexes for Telegram identity and short-lived login state.
+- New Telegram identities create normal `USER` members with `MemberAuthType.TELEGRAM`; existing Telegram identities log into their linked member.
+- Added `jose` as a backend dependency for JWT/JWKS verification.
+
+Validation completed:
+
+- Focused Telegram auth service tests passed: `6/6`.
+- `npx tsc -p apps/quickmeds-api/tsconfig.app.json --noEmit` passed.
+- `npx tsc -p apps/quickmeds-batch/tsconfig.app.json --noEmit` passed.
+- `npm run build` passed.
+- Backend `git diff --check` passed.
+
+Remaining verification:
+
+- Live Telegram browser QA remains pending until BotFather Web Login URLs and backend `TELEGRAM_OIDC_*` env values are configured.

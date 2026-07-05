@@ -53,6 +53,26 @@ describe('PharmacyService', () => {
 		expect(pharmacyModel.create).toHaveBeenLastCalledWith(expect.objectContaining({ pharmacyDeliveryFee: 0 }));
 	});
 
+	it('rejects invalid pharmacy coordinates before creating records', async () => {
+		await expect(
+			service.createPharmacy({ memberId: 'member-id', pharmacyLatitude: 0, pharmacyLongitude: 0 } as any),
+		).rejects.toThrow();
+		await expect(
+			service.createPharmacy({ memberId: 'member-id', pharmacyLatitude: 91, pharmacyLongitude: 69.2797 } as any),
+		).rejects.toThrow();
+		await expect(
+			service.createPharmacy({ memberId: 'member-id', pharmacyLatitude: 41.3111, pharmacyLongitude: -181 } as any),
+		).rejects.toThrow();
+
+		expect(pharmacyModel.create).not.toHaveBeenCalled();
+	});
+
+	it('requires latitude and longitude to be updated together', async () => {
+		await expect(service.updatePharmacy('member-id' as any, { _id: 'pharmacy-id', pharmacyLatitude: 41.3111 } as any)).rejects.toThrow(
+			'Pharmacy latitude and longitude must be provided together.',
+		);
+	});
+
 	let service: PharmacyService;
 
 	beforeEach(() => {

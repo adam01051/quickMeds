@@ -60,3 +60,7 @@ Pharmacy discovery is authoritative. Do not introduce medicine catalog, inventor
 8. Complete an authenticated Admin Users smoke check covering member list, search, type/status filters, pagination, and member updates.
 9. Restart the API server after deploying the chatbot module and smoke test `POST /api/v1/chatbot/message` for missing-provider, platform-support, out-of-scope, medical-advice, and local rate-limit prompts.
 10. Configure backend-only `GEMINI_API_KEY` and optional `GEMINI_MODEL` before expecting live Gemini assistant answers.
+11. Complete authenticated owner create/edit smoke tests that verify confirmed frontend map-pin coordinates are accepted and invalid direct scalar coordinates are rejected.
+12. Design GeoJSON `Point`, `2dsphere`, radius search, returned distance, and duplicate-near-coordinate behavior before replacing scalar-only coordinate storage.
+13. Configure Telegram BotFather Web Login allowed URLs and backend-only Telegram OIDC env values, then smoke test `/auth/telegram/start`, `/callback`, and `/exchange` with a real Telegram account.
+14. Design Telegram account-linking, `phone`, `telegram:bot_access`, bot notifications, and HttpOnly-cookie auth migration as separate approved phases.
