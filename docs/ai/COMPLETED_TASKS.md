@@ -272,3 +272,13 @@ Validation completed:
 Remaining verification:
 
 - Live Telegram browser QA remains pending until BotFather Web Login URLs and backend `TELEGRAM_OIDC_*` env values are configured.
+
+## Docker Backend Publish Port Fix
+
+- Updated backend Docker Compose so `quickmeds-api` receives `PORT_API=3007` and `quickmeds-batch` receives `PORT_BATCH=3008`, matching the published host mappings `4001:3007` and `4002:3008`.
+- Changed Compose startup commands to build the targeted Nest projects (`quickmeds-api` and `quickmeds-batch`) before running each production entrypoint.
+
+Validation completed:
+
+- `docker compose config` renders both services with the expected environment ports and host mappings.
+- Backend `git diff --check` passed.

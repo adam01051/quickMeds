@@ -5,7 +5,9 @@ services:
     image: node:20.19.6
     ports:
       - 4001:3007
-  
+    environment:
+      PORT_API: 3007
+
     volumes:
       - ./:/usr/src/quickmeds
     working_dir: /usr/src/quickmeds
@@ -14,7 +16,7 @@ services:
       - monorepo-network
 
     #for production, you can use the following command to run the application
-    command: bash -c "npm install && npm run build && npm run start:prod"
+    command: bash -c "npm install && npx nest build quickmeds-api && npm run start:prod"
 
     #for development, you can use the following command to run the application
     #command: bash -c "npm install && npm run start:dev"
@@ -26,7 +28,9 @@ services:
     image: node:20.19.6
     ports:
       - 4002:3008
-  
+    environment:
+      PORT_BATCH: 3008
+
     volumes:
       - ./:/usr/src/quickmeds
     working_dir: /usr/src/quickmeds
@@ -35,7 +39,7 @@ services:
       - monorepo-network
 
     #for production, you can use the following command to run the application
-    command: bash -c "npm install && npm run build && npm run start:prod:batch"
+    command: bash -c "npm install && npx nest build quickmeds-batch && npm run start:prod:batch"
 
     #for development, you can use the following command to run the application
     #command: bash -c "npm install && npm run start:dev"
