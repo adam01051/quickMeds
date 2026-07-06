@@ -14,7 +14,7 @@
 		"start:debug": "nest start --debug",
 		"start:debug:api": "nest start --debug --watch",
 		"start:prod": "NODE_ENV=production node dist/apps/quickmeds-api/main",
-		"start:prod:batch": "node dist/apps/quickmeds-batch/main",
+		"start:prod:batch": "NODE_ENV=production node dist/apps/quickmeds-batch/main",
 		"migrate:pharmacy-locations": "ts-node apps/quickmeds-api/src/scripts/migrate-pharmacy-locations.ts",
 		"migrate:pharmacy-hours": "ts-node apps/quickmeds-api/src/scripts/migrate-pharmacy-hours.ts",
 		"train": "ts-node train.ts",

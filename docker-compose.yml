@@ -1,0 +1,45 @@
+services:
+  quickmeds-api:
+    container_name: quickmeds-api
+    restart: always
+    image: node:20.19.6
+    ports:
+      - 4001:3007
+  
+    volumes:
+      - ./:/usr/src/quickmeds
+    working_dir: /usr/src/quickmeds
+
+    networks:
+      - monorepo-network
+
+    #for production, you can use the following command to run the application
+    command: bash -c "npm install && npm run build && npm run start:prod"
+
+    #for development, you can use the following command to run the application
+    #command: bash -c "npm install && npm run start:dev"
+
+
+  quickmeds-batch:
+    container_name: quickmeds-batch
+    restart: unless-stopped
+    image: node:20.19.6
+    ports:
+      - 4002:3008
+  
+    volumes:
+      - ./:/usr/src/quickmeds
+    working_dir: /usr/src/quickmeds
+
+    networks:
+      - monorepo-network
+
+    #for production, you can use the following command to run the application
+    command: bash -c "npm install && npm run build && npm run start:prod:batch"
+
+    #for development, you can use the following command to run the application
+    #command: bash -c "npm install && npm run start:dev"
+
+networks:
+  monorepo-network:
+    driver: bridge
