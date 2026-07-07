@@ -16,7 +16,7 @@ services:
       - monorepo-network
 
     #for production, you can use the following command to run the application
-    command: bash -c "npm install && npx nest build quickmeds-api && npm run start:prod"
+    command: bash -c "npm install && npm run build && npm run start:prod"
 
     #for development, you can use the following command to run the application
     #command: bash -c "npm install && npm run start:dev"
@@ -39,7 +39,7 @@ services:
       - monorepo-network
 
     #for production, you can use the following command to run the application
-    command: bash -c "npm install && npx nest build quickmeds-batch && npm run start:prod:batch"
+    command: bash -c "npm install && npm run build && npm run start:prod:batch"
 
     #for development, you can use the following command to run the application
     #command: bash -c "npm install && npm run start:dev"
