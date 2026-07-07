@@ -7,6 +7,8 @@ services:
       - 4001:3007
     environment:
       PORT_API: 3007
+    env_file:
+       - .env
 
     volumes:
       - ./:/usr/src/quickmeds
@@ -30,7 +32,8 @@ services:
       - 4002:3008
     environment:
       PORT_BATCH: 3008
-
+    env_file:
+       - .env
     volumes:
       - ./:/usr/src/quickmeds
     working_dir: /usr/src/quickmeds
